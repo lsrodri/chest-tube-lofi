@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -30,7 +31,8 @@
       -webkit-user-select: none;
     }
 
-    html, body {
+    html,
+    body {
       margin: 0;
       padding: 0;
       background-color: #262624;
@@ -46,23 +48,19 @@
 
     /* Wireframe Hatched Patterns for Lo-Fi Visual Hierarchy */
     .bg-hatched {
-      background-image: repeating-linear-gradient(
-        -45deg,
-        #e5e5df,
-        #e5e5df 6px,
-        #f6f6f2 6px,
-        #f6f6f2 12px
-      );
+      background-image: repeating-linear-gradient(-45deg,
+          #e5e5df,
+          #e5e5df 6px,
+          #f6f6f2 6px,
+          #f6f6f2 12px);
     }
 
     .bg-hatched-dark {
-      background-image: repeating-linear-gradient(
-        -45deg,
-        #111111,
-        #111111 6px,
-        #2b2b28 6px,
-        #2b2b28 12px
-      );
+      background-image: repeating-linear-gradient(-45deg,
+          #111111,
+          #111111 6px,
+          #2b2b28 6px,
+          #2b2b28 12px);
     }
 
     .bg-dots {
@@ -212,6 +210,7 @@
         border-radius: 0 !important;
         box-shadow: none !important;
       }
+
       .viewport-bezel-mode.devtools-hidden-bar {
         height: 100dvh !important;
       }
@@ -221,66 +220,81 @@
     .wire-scroll::-webkit-scrollbar {
       width: 8px;
     }
+
     .wire-scroll::-webkit-scrollbar-track {
       background: #e5e5df;
       border-left: 2px solid #111;
     }
+
     .wire-scroll::-webkit-scrollbar-thumb {
       background: #111;
     }
   </style>
 </head>
+
 <body class="flex flex-col items-center justify-start min-h-[100dvh]">
 
   <!-- =========================================================================
        RESEARCHER UTILITY & CHROME DEVTOOLS BAR (Collapsible for pure iPad view)
        ========================================================================= -->
-  <div id="researcherBar" class="w-full bg-[#181816] text-[#f6f6f2] border-b-2 border-[#3c3c38] px-3 py-1.5 flex flex-wrap items-center justify-between gap-2 text-xs font-mono-wire z-50">
+  <div id="researcherBar"
+    class="w-full bg-[#181816] text-[#f6f6f2] border-b-2 border-[#3c3c38] px-3 py-1.5 flex flex-wrap items-center justify-between gap-2 text-xs font-mono-wire z-50">
     <div class="flex items-center gap-2 flex-wrap">
-      <span class="bg-[#f6f6f2] text-[#111] font-bold px-2 py-0.5 rounded-sm uppercase tracking-wider">XR Lo-Fi Testbed</span>
-      
+      <span class="bg-[#f6f6f2] text-[#111] font-bold px-2 py-0.5 rounded-sm uppercase tracking-wider">XR Lo-Fi
+        Testbed</span>
+
       <!-- Bezel / Viewport Toggle -->
-      <button id="btnToggleFrame" onclick="toggleFrameMode()" class="px-2.5 py-1 bg-[#2c2c29] hover:bg-[#3c3c38] border border-[#666] rounded-sm font-bold transition">
+      <button id="btnToggleFrame" onclick="toggleFrameMode()"
+        class="px-2.5 py-1 bg-[#2c2c29] hover:bg-[#3c3c38] border border-[#666] rounded-sm font-bold transition">
         [Frame: 1024×768 iPad Bezel]
       </button>
 
       <!-- Step Quick-Jumper for Researcher Testing -->
       <label class="flex items-center gap-1 bg-[#2c2c29] border border-[#666] px-2 py-0.5 rounded-sm">
         <span class="text-[#aaa]">Jump:</span>
-        <select id="stepJumpSelect" onchange="researcherJumpToStep(this.value)" class="bg-transparent text-[#f6f6f2] font-bold focus:outline-none cursor-pointer">
+        <select id="stepJumpSelect" onchange="researcherJumpToStep(this.value)"
+          class="bg-transparent text-[#f6f6f2] font-bold focus:outline-none cursor-pointer">
           <!-- Populated dynamically -->
         </select>
       </label>
 
       <!-- Reset Current Step / Session -->
-      <button onclick="resetEntireSession()" class="px-2 py-1 bg-[#2c2c29] hover:bg-[#3c3c38] border border-[#666] rounded-sm text-[#ddd]" title="Reset all step verifications">
-        [↺ Reset Session]
+      <button onclick="resetEntireSession()"
+        class="px-2 py-1 bg-[#2c2c29] hover:bg-[#3c3c38] border border-[#666] rounded-sm text-[#ddd]"
+        title="Reset all step verifications">
+        [RESET SESSION]
       </button>
     </div>
 
     <!-- Right: Live Telemetry Ticker & CSV Export -->
     <div class="flex items-center gap-2 flex-wrap">
-      <div id="telemetryTicker" class="hidden md:flex items-center gap-1.5 bg-[#111] border border-[#444] px-2.5 py-1 rounded-sm text-[11px] text-[#bbb] max-w-[320px] truncate">
+      <div id="telemetryTicker"
+        class="hidden md:flex items-center gap-1.5 bg-[#111] border border-[#444] px-2.5 py-1 rounded-sm text-[11px] text-[#bbb] max-w-[320px] truncate">
         <span class="inline-block w-2 h-2 rounded-full bg-white animate-pulse"></span>
         <span id="telemetryLastEvent">LOG READY (0 events)</span>
       </div>
 
-      <button onclick="exportTelemetryCSV()" class="px-2.5 py-1 bg-[#f6f6f2] text-[#111] font-bold border border-white rounded-sm hover:bg-[#ddd] transition">
-        ⬇ Export CSV (<span id="telemetryCount">0</span>)
+      <button onclick="exportTelemetryCSV()"
+        class="px-2.5 py-1 bg-[#f6f6f2] text-[#111] font-bold border border-white rounded-sm hover:bg-[#ddd] transition">
+        [EXPORT CSV] (<span id="telemetryCount">0</span>)
       </button>
 
-      <button onclick="openTelemetryModal()" class="px-2 py-1 bg-[#2c2c29] hover:bg-[#3c3c38] border border-[#666] rounded-sm">
-        [📋 View Log]
+      <button onclick="openTelemetryModal()"
+        class="px-2 py-1 bg-[#2c2c29] hover:bg-[#3c3c38] border border-[#666] rounded-sm">
+        [VIEW LOG]
       </button>
 
-      <button onclick="toggleResearcherBar(false)" class="px-2 py-1 bg-[#2c2c29] hover:bg-[#3c3c38] border border-[#666] rounded-sm text-[#aaa]" title="Hide utility bar for full-bleed DevTools screenshot">
+      <button onclick="toggleResearcherBar(false)"
+        class="px-2 py-1 bg-[#2c2c29] hover:bg-[#3c3c38] border border-[#666] rounded-sm text-[#aaa]"
+        title="Hide utility bar for full-bleed DevTools screenshot">
         [Hide Bar]
       </button>
     </div>
   </div>
 
   <!-- Floating Mini Pill to Restore Researcher Bar when hidden -->
-  <button id="btnRestoreResearcherBar" onclick="toggleResearcherBar(true)" class="hidden fixed top-1 right-2 z-50 bg-[#111] text-[#f6f6f2] border border-[#777] px-2 py-0.5 text-[10px] font-mono-wire rounded opacity-75 hover:opacity-100">
+  <button id="btnRestoreResearcherBar" onclick="toggleResearcherBar(true)"
+    class="hidden fixed top-1 right-2 z-50 bg-[#111] text-[#f6f6f2] border border-[#777] px-2 py-0.5 text-[10px] font-mono-wire rounded opacity-75 hover:opacity-100">
     [+ Researcher Bar]
   </button>
 
@@ -297,7 +311,8 @@
         <div class="flex items-center justify-between gap-3">
           <!-- Left: Step Number & Title -->
           <div class="flex items-center gap-2.5 min-w-0">
-            <span id="headerStepBadge" class="bg-[#111111] text-[#f6f6f2] font-mono-wire font-bold text-sm md:text-base px-2.5 py-1 shrink-0 border-2 border-[#111]">
+            <span id="headerStepBadge"
+              class="bg-[#111111] text-[#f6f6f2] font-mono-wire font-bold text-sm md:text-base px-2.5 py-1 shrink-0 border-2 border-[#111]">
               STEP 1 / 10
             </span>
             <h1 id="headerStepTitle" class="text-lg md:text-xl font-extrabold uppercase tracking-tight truncate">
@@ -307,13 +322,16 @@
 
           <!-- Right: State Pill + Persistent Text Density Toggle -->
           <div class="flex items-center gap-2 shrink-0">
-            <span id="headerStatePill" class="hidden sm:inline-block font-mono-wire text-xs font-bold uppercase px-2.5 py-1 border-2 border-[#111] bg-hatched">
+            <span id="headerStatePill"
+              class="hidden sm:inline-block font-mono-wire text-xs font-bold uppercase px-2.5 py-1 border-2 border-[#111] bg-hatched">
               STATE A: BRIEFING / EXECUTION
             </span>
 
-            <button id="btnTextModeToggle" onclick="toggleTextDensity()" class="wire-btn-sm px-3 py-1.5 text-xs md:text-sm font-mono-wire flex items-center gap-1.5" title="Toggle between Full Paragraph and Glanceable 3-Bullet Checklist">
-              <span>👁 TEXT:</span>
-              <span id="labelTextMode" class="underline font-extrabold">FULL</span>
+            <button id="btnTextModeToggle" onclick="toggleTextDensity()"
+              class="wire-btn-sm px-3 py-1.5 text-xs md:text-sm font-mono-wire flex items-center gap-1.5"
+              title="Toggle persistent text mode between compact and full">
+              <span>TEXT MODE:</span>
+              <span id="labelTextMode" class="underline font-extrabold">COMPACT</span>
             </button>
           </div>
         </div>
@@ -327,7 +345,8 @@
       <!-- =====================================================================
            MAIN DYNAMIC VIEWPORT BODY (Renders State A, B, C, D, or Summary)
            ===================================================================== -->
-      <section id="mainStage" class="flex-1 w-full overflow-y-auto wire-scroll p-4 md:p-5 flex flex-col justify-between relative">
+      <section id="mainStage"
+        class="flex-1 w-full overflow-y-auto wire-scroll p-4 md:p-5 flex flex-col justify-between relative">
         <!-- Populated dynamically by renderCurrentState() -->
       </section>
 
@@ -349,18 +368,24 @@
       <div class="flex items-center justify-between border-b-2 border-[#111] pb-3">
         <div>
           <h2 class="text-lg font-extrabold uppercase font-mono-wire">Session Telemetry Log (CSV Format)</h2>
-          <p class="text-xs text-[#4a4a46] font-mono-wire">Tracks task-switching, video playback controls, text toggles, quiz attempts, and remediation loops.</p>
+          <p class="text-xs text-[#4a4a46] font-mono-wire">Tracks task-switching, video playback controls, text toggles,
+            quiz attempts, and remediation loops.</p>
         </div>
-        <button onclick="closeTelemetryModal()" class="wire-btn-sm px-3 py-1 font-mono-wire text-sm">[✕ Close]</button>
+        <button onclick="closeTelemetryModal()" class="wire-btn-sm px-3 py-1 font-mono-wire text-sm">[CLOSE]</button>
       </div>
 
-      <textarea id="telemetryCsvTextarea" readonly class="w-full flex-1 min-h-[260px] p-3 font-mono-wire text-xs bg-white border-2 border-[#111] focus:outline-none select-all" style="user-select: text; -webkit-user-select: text;"></textarea>
+      <textarea id="telemetryCsvTextarea" readonly
+        class="w-full flex-1 min-h-[260px] p-3 font-mono-wire text-xs bg-white border-2 border-[#111] focus:outline-none select-all"
+        style="user-select: text; -webkit-user-select: text;"></textarea>
 
       <div class="flex items-center justify-between gap-3">
-        <span id="copyFeedbackMsg" class="text-xs font-mono-wire font-bold text-[#111]">Ready to copy or download.</span>
+        <span id="copyFeedbackMsg" class="text-xs font-mono-wire font-bold text-[#111]">Ready to copy or
+          download.</span>
         <div class="flex items-center gap-3">
-          <button onclick="copyTelemetryToClipboard()" class="wire-btn-sm px-4 py-2 font-mono-wire text-xs">[📋 Copy CSV to Clipboard]</button>
-          <button onclick="exportTelemetryCSV()" class="wire-btn-sm px-4 py-2 font-mono-wire text-xs bg-[#111] text-white">[⬇ Download .CSV File]</button>
+          <button onclick="copyTelemetryToClipboard()" class="wire-btn-sm px-4 py-2 font-mono-wire text-xs">[COPY CSV TO
+            CLIPBOARD]</button>
+          <button onclick="exportTelemetryCSV()"
+            class="wire-btn-sm px-4 py-2 font-mono-wire text-xs bg-[#111] text-white">[DOWNLOAD CSV FILE]</button>
         </div>
       </div>
     </div>
@@ -973,7 +998,8 @@
       currentStepIndex: 0,          // 0..9
       currentState: "A",            // "A" (Prompt), "B" (Video), "C" (Quiz), "D" (Remediation), "DONE" (Session Summary)
       currentQuestionIndex: 0,      // 0 or 1 within current step
-      textMode: "FULL",             // "FULL" or "COMPACT"
+      textMode: "COMPACT",          // Persistent user preference from top-right toggle: "FULL" or "COMPACT"
+      temporaryFullStepIndex: null,  // Step index with temporary full-text expansion from compact checklist tap
       frameMode: "BEZEL",           // "BEZEL" (1024x768) or "FILL"
       // Track verification status per question ID: 'PENDING' | 'VERIFIED' | 'FAILED'
       questionStatus: {},
@@ -1104,7 +1130,7 @@
       textarea.select();
       document.execCommand("copy");
       const msg = document.getElementById("copyFeedbackMsg");
-      msg.textContent = "✓ Copied CSV to clipboard!";
+      msg.textContent = "Copied CSV to clipboard.";
       setTimeout(() => { msg.textContent = "Ready to copy or download."; }, 2500);
     }
 
@@ -1123,6 +1149,7 @@
       const idx = parseInt(stepIdxStr, 10);
       appState.currentStepIndex = idx;
       appState.currentState = "A";
+      appState.temporaryFullStepIndex = null;
       appState.currentQuestionIndex = getFirstUnverifiedQuestionIndex(idx);
       logEvent("RESEARCHER_JUMP_STEP", `Jumped to Step ${idx + 1}`);
       renderCurrentState();
@@ -1170,6 +1197,7 @@
       appState.currentState = "A";
       appState.currentQuestionIndex = 0;
       appState.lastErrorRecord = null;
+      appState.temporaryFullStepIndex = null;
       initVerificationState();
       logEvent("SESSION_RESET", "Reset all steps to PENDING and returned to Step 1");
       renderCurrentState();
@@ -1177,8 +1205,22 @@
 
     function toggleTextDensity() {
       appState.textMode = appState.textMode === "FULL" ? "COMPACT" : "FULL";
+      if (appState.textMode === "FULL") {
+        appState.temporaryFullStepIndex = null;
+      }
       document.getElementById("labelTextMode").textContent = appState.textMode;
       logEvent("TOGGLE_TEXT_DENSITY", `Switched instruction density to ${appState.textMode}`);
+      renderCurrentState();
+    }
+
+    function isFullTextVisibleForCurrentStep() {
+      return appState.textMode === "FULL" || appState.temporaryFullStepIndex === appState.currentStepIndex;
+    }
+
+    function expandCompactToFullForCurrentStep() {
+      if (appState.textMode === "FULL") return;
+      appState.temporaryFullStepIndex = appState.currentStepIndex;
+      logEvent("TEMP_EXPAND_FULL_TEXT", `Temporarily expanded Step ${appState.currentStepIndex + 1} from compact to full text`);
       renderCurrentState();
     }
 
@@ -1265,6 +1307,7 @@
       appState.currentStepIndex = targetIdx;
       appState.currentQuestionIndex = 0;
       appState.currentState = "A";
+      appState.temporaryFullStepIndex = null;
       logEvent("SIMULATOR_TRACT_ROLLBACK", `Rolled back to Step ${targetStepNumber} to re-establish pleural tract`);
       renderCurrentState();
     }
@@ -1282,6 +1325,9 @@
         appState.currentStepIndex++;
         appState.currentQuestionIndex = 0;
         appState.currentState = "A";
+        if (appState.textMode === "COMPACT") {
+          appState.temporaryFullStepIndex = null;
+        }
         logEvent("ADVANCE_NEXT_STEP", `Advanced to Step ${appState.currentStepIndex + 1}`);
         renderCurrentState();
       } else {
@@ -1326,7 +1372,7 @@
         let statusSymbol = "";
         if (verified) {
           bgClass = "bg-[#111111] text-[#f6f6f2]";
-          statusSymbol = "✓";
+          statusSymbol = "OK";
         } else if (hasFail) {
           bgClass = "bg-hatched text-[#111] font-extrabold";
           statusSymbol = "!";
@@ -1379,22 +1425,22 @@
         let icon = "[ ] PENDING";
         if (st === "VERIFIED") {
           badgeStyle = "bg-[#111] text-[#f6f6f2]";
-          icon = "[✓] VERIFIED";
+          icon = "[OK] VERIFIED";
         } else if (st === "FAILED") {
           badgeStyle = "bg-hatched text-[#111] font-extrabold";
-          icon = "[⚠] NEEDS FIX";
+          icon = "[REVIEW] NEEDS FIX";
         }
         return `
-          <button onclick="goToStateC(${qIdx})" class="px-3 py-1.5 border-2 border-[#111] font-mono-wire text-xs font-bold flex items-center gap-2 ${badgeStyle}">
+          <div class="px-3 py-1.5 border-2 border-[#111] font-mono-wire text-xs font-bold flex items-center gap-2 ${badgeStyle}">
             <span>${q.label}</span>
             <span>${icon}</span>
-          </button>
+          </div>
         `;
       }).join("");
 
       // Instruction Body: FULL Paragraph vs COMPACT 3-Bullet Glanceable Checklist
       let instructionContentHtml = "";
-      if (appState.textMode === "FULL") {
+      if (isFullTextVisibleForCurrentStep()) {
         instructionContentHtml = `
           <div class="wire-box p-5 md:p-6 flex flex-col gap-4">
             <div class="flex items-center justify-between border-b-2 border-[#111] pb-2">
@@ -1410,10 +1456,10 @@
         `;
       } else {
         instructionContentHtml = `
-          <div class="wire-box p-5 md:p-6 flex flex-col gap-3">
+          <div onclick="expandCompactToFullForCurrentStep()" class="wire-box p-5 md:p-6 flex flex-col gap-3 text-left cursor-pointer" role="button" aria-label="Expand compact checklist to full text for this step">
             <div class="flex items-center justify-between border-b-2 border-[#111] pb-2">
               <span class="font-mono-wire text-xs font-extrabold uppercase tracking-wider bg-hatched px-2 py-0.5 border border-[#111]">
-                GLANCEABLE EXECUTION CHECKLIST (COMPACT VIEW)
+                COMPACT / HANDS BUSY MODE (TAP TO PREVIEW FULL TEXT)
               </span>
               <span class="font-mono-wire text-xs text-[#4a4a46]">Hands-Busy Mode</span>
             </div>
@@ -1456,7 +1502,7 @@
       footer.innerHTML = `
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
           <button onclick="goToStateB()" class="wire-btn px-5 py-3 text-lg md:text-xl gap-3">
-            <span class="font-mono-wire text-2xl bg-[#111] text-[#f6f6f2] w-10 h-10 flex items-center justify-center shrink-0">▶</span>
+            <span class="font-mono-wire text-[11px] bg-[#111] text-[#f6f6f2] w-10 h-10 flex items-center justify-center shrink-0">PLAY</span>
             <div class="flex flex-col">
               <span class="font-extrabold">Watch Demo Video (15s)</span>
               <span class="font-mono-wire text-xs font-normal opacity-80">Optional visual instruction with playback controls</span>
@@ -1465,7 +1511,7 @@
 
           ${allVerified ? `
             <button onclick="advanceToNextStep()" class="wire-btn wire-btn-primary px-5 py-3 text-lg md:text-xl gap-3">
-              <span class="font-mono-wire text-2xl bg-[#f6f6f2] text-[#111] w-10 h-10 flex items-center justify-center shrink-0">→</span>
+              <span class="font-mono-wire text-[11px] bg-[#f6f6f2] text-[#111] w-10 h-10 flex items-center justify-center shrink-0">NEXT</span>
               <div class="flex flex-col">
                 <span class="font-extrabold">${appState.currentStepIndex < 9 ? `Proceed to Step ${step.stepNumber + 1}` : `Complete Procedure`}</span>
                 <span class="font-mono-wire text-xs font-normal opacity-85">All checks verified for Step ${step.stepNumber}</span>
@@ -1473,7 +1519,7 @@
             </button>
           ` : `
             <button onclick="goToStateC()" class="wire-btn wire-btn-primary px-5 py-3 text-lg md:text-xl gap-3">
-              <span class="font-mono-wire text-2xl bg-[#f6f6f2] text-[#111] w-10 h-10 flex items-center justify-center shrink-0">✓</span>
+              <span class="font-mono-wire text-[11px] bg-[#f6f6f2] text-[#111] w-10 h-10 flex items-center justify-center shrink-0">CHECK</span>
               <div class="flex flex-col">
                 <span class="font-extrabold">Task Performed — Verify Step</span>
                 <span class="font-mono-wire text-xs font-normal opacity-85">Answer ${step.questions.length} diagnostic self-check${step.questions.length > 1 ? 's' : ''}</span>
@@ -1506,7 +1552,7 @@
 
             <!-- Overlaid Demo Focus Caption Banner at Bottom of Video Canvas -->
             <div class="bg-[#f6f6f2]/95 border-t-2 border-[#111] px-4 py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 z-10">
-              <div class="text-xs md:text-sm font-bold text-[#111]">
+              <div id="demoFocusText" class="font-bold text-[#111] whitespace-nowrap overflow-hidden text-ellipsis" style="font-size: 11px; line-height: 1.2;">
                 <span class="font-mono-wire uppercase bg-hatched px-1.5 py-0.5 border border-[#111] mr-1.5">DEMO FOCUS:</span>
                 ${step.demoFocus}
               </div>
@@ -1529,29 +1575,32 @@
       footer.innerHTML = `
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full">
           <button onclick="toggleVideoPlayPause()" class="wire-btn px-4 py-2 text-base md:text-lg gap-2 justify-center">
-            <span id="btnPlayPauseIcon" class="font-mono-wire text-xl font-extrabold">${appState.video.isPlaying ? "⏸" : "▶"}</span>
+            <span id="btnPlayPauseIcon" class="font-mono-wire text-xs font-extrabold">${appState.video.isPlaying ? "PAUSE" : "PLAY"}</span>
             <span id="btnPlayPauseLabel">${appState.video.isPlaying ? "Pause" : "Play"}</span>
           </button>
 
           <button onclick="skipVideoBackward5s()" class="wire-btn px-4 py-2 text-base md:text-lg gap-2 justify-center">
-            <span class="font-mono-wire text-xl font-extrabold">⏪</span>
+            <span class="font-mono-wire text-xs font-extrabold">BACK</span>
             <span>-5s</span>
           </button>
 
           <button onclick="rewatchVideoFromStart()" class="wire-btn px-4 py-2 text-base md:text-lg gap-2 justify-center">
-            <span class="font-mono-wire text-xl font-extrabold">↺</span>
+            <span class="font-mono-wire text-xs font-extrabold">RESTART</span>
             <span>Rewatch</span>
           </button>
 
           <button onclick="goToStateA()" class="wire-btn wire-btn-primary px-4 py-2 text-base md:text-lg gap-2 justify-center">
-            <span class="font-mono-wire text-xl font-extrabold">✕</span>
+            <span class="font-mono-wire text-xs font-extrabold">EXIT</span>
             <span>Back to Task</span>
           </button>
         </div>
       `;
 
       // Size canvas immediately
-      setTimeout(resizeAndDrawVideoCanvas, 20);
+      setTimeout(() => {
+        resizeAndDrawVideoCanvas();
+        fitDemoFocusTextToSingleLine();
+      }, 20);
     }
 
     /* -------------------------------------------------------------------------
@@ -1569,8 +1618,8 @@
         const st = appState.questionStatus[q.id];
         const isActive = idx === qIdx;
         let stateTag = "[ ]";
-        if (st === "VERIFIED") stateTag = "[✓]";
-        if (st === "FAILED") stateTag = "[⚠]";
+        if (st === "VERIFIED") stateTag = "[OK]";
+        if (st === "FAILED") stateTag = "[REVIEW]";
 
         return `
           <button onclick="goToStateC(${idx})" 
@@ -1591,7 +1640,7 @@
           <button onclick="handleQuizOptionSelect(${idx})" 
                   class="wire-btn w-full p-3.5 md:p-4 gap-3.5 justify-start ${cardStyle}">
             <span class="font-mono-wire text-lg font-extrabold border-2 border-current w-9 h-9 flex items-center justify-center shrink-0">
-              ${isVerifiedOptimalCard ? "✓" : optionLetters[idx]}
+              ${isVerifiedOptimalCard ? "OK" : optionLetters[idx]}
             </span>
             <span class="text-base md:text-lg font-bold leading-snug text-left flex-1">
               ${opt.text}
@@ -1628,7 +1677,7 @@
           ${qStatus === "VERIFIED" ? `
             <div class="wire-box-flat bg-[#111] text-[#f6f6f2] px-4 py-2.5 flex items-center justify-between">
               <span class="font-mono-wire text-sm font-extrabold uppercase">
-                ✓ ${qObj.id} VERIFIED — OPTIMAL PHYSICAL STATE CONFIRMED
+                OK ${qObj.id} VERIFIED - OPTIMAL PHYSICAL STATE CONFIRMED
               </span>
               <span class="font-mono-wire text-xs opacity-80">Gate Unlocked</span>
             </div>
@@ -1664,7 +1713,7 @@
       } else {
         rightCtaHtml = `
           <div class="wire-box-flat bg-[#dddcd4] px-4 py-3 flex items-center justify-center font-mono-wire text-xs md:text-sm font-bold text-[#4a4a46] min-h-[68px]">
-            [🔒 Tap the option card above that matches your physical state on the trainer]
+            [LOCKED: Select the option card above that matches your physical state on the trainer]
           </div>
         `;
       }
@@ -1672,7 +1721,7 @@
       footer.innerHTML = `
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
           <button onclick="goToStateA()" class="wire-btn px-4 py-3 text-base md:text-lg gap-2 justify-center">
-            <span class="font-mono-wire text-xl">←</span>
+            <span class="font-mono-wire text-xs">BACK</span>
             <span>Back to Step ${step.stepNumber} Instructions</span>
           </button>
           ${rightCtaHtml}
@@ -1696,7 +1745,7 @@
           <!-- High-Contrast Wireframe Alert Banner + Simulator Gate Badge -->
           <div class="wire-box bg-[#111111] text-[#f6f6f2] p-4 flex flex-wrap items-center justify-between gap-2">
             <div class="flex items-center gap-2.5">
-              <span class="font-mono-wire text-2xl font-extrabold bg-[#f6f6f2] text-[#111] px-2.5 py-0.5">⚠</span>
+              <span class="font-mono-wire text-xs font-extrabold bg-[#f6f6f2] text-[#111] px-2.5 py-1">ALERT</span>
               <div>
                 <h2 class="text-lg md:text-xl font-extrabold uppercase tracking-tight">
                   PROCEDURAL DEVIATION DETECTED (${err.questionLabel})
@@ -1752,7 +1801,7 @@
       // 1. Review Instructions
       buttons.push(`
         <button onclick="goToStateA()" class="wire-btn px-3.5 py-2 text-sm md:text-base gap-2 justify-center">
-          <span class="font-mono-wire text-lg">📖</span>
+          <span class="font-mono-wire text-xs">REVIEW</span>
           <span>Review Instructions</span>
         </button>
       `);
@@ -1760,7 +1809,7 @@
       // 2. Re-watch Demo Video
       buttons.push(`
         <button onclick="goToStateB()" class="wire-btn px-3.5 py-2 text-sm md:text-base gap-2 justify-center">
-          <span class="font-mono-wire text-lg">▶</span>
+          <span class="font-mono-wire text-xs">PLAY</span>
           <span>Watch Demo</span>
         </button>
       `);
@@ -1769,7 +1818,7 @@
       if (err.rollbackTarget) {
         buttons.push(`
           <button onclick="executeRollbackToStep(${err.rollbackTarget})" class="wire-btn bg-hatched px-3.5 py-2 text-sm md:text-base gap-2 justify-center">
-            <span class="font-mono-wire text-lg font-extrabold">⏮</span>
+            <span class="font-mono-wire text-xs font-extrabold">ROLLBACK</span>
             <span>Roll Back to Step ${err.rollbackTarget}</span>
           </button>
         `);
@@ -1777,7 +1826,7 @@
         // Or allow checking the other question in this step while keeping step advance locked
         buttons.push(`
           <button onclick="goToStateC(${otherQuestionIdx})" class="wire-btn bg-hatched px-3.5 py-2 text-sm md:text-base gap-2 justify-center">
-            <span class="font-mono-wire text-lg font-extrabold">→</span>
+            <span class="font-mono-wire text-xs font-extrabold">NEXT</span>
             <span>Check ${step.questions[otherQuestionIdx].id} First</span>
           </button>
         `);
@@ -1786,7 +1835,7 @@
       // 4. Primary CTA: Fixed on Trainer — Retry Check
       buttons.push(`
         <button onclick="retryFailedQuestion()" class="wire-btn wire-btn-primary px-4 py-2 text-sm md:text-base gap-2 justify-center">
-          <span class="font-mono-wire text-lg font-extrabold">↻</span>
+          <span class="font-mono-wire text-xs font-extrabold">RETRY</span>
           <span>Fixed on Trainer — Re-Verify</span>
         </button>
       `);
@@ -1855,15 +1904,15 @@
       footer.innerHTML = `
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
           <button onclick="openTelemetryModal()" class="wire-btn px-5 py-3 text-base md:text-lg gap-2 justify-center">
-            <span class="font-mono-wire text-xl">📋</span>
+            <span class="font-mono-wire text-xs">LOG</span>
             <span>Inspect / Copy CSV Log</span>
           </button>
           <button onclick="exportTelemetryCSV()" class="wire-btn wire-btn-primary px-5 py-3 text-base md:text-lg gap-2 justify-center">
-            <span class="font-mono-wire text-xl">⬇</span>
+            <span class="font-mono-wire text-xs">SAVE</span>
             <span>Download Session CSV</span>
           </button>
           <button onclick="resetEntireSession()" class="wire-btn px-5 py-3 text-base md:text-lg gap-2 justify-center">
-            <span class="font-mono-wire text-xl">↺</span>
+            <span class="font-mono-wire text-xs">RESET</span>
             <span>Start New Participant Session</span>
           </button>
         </div>
@@ -1874,7 +1923,9 @@
        8. SIMULATED LO-FI WIREFRAME VIDEO PLAYER & SCHEMATIC CANVAS ANIMATOR
        ========================================================================= */
     function startVideoLoop() {
+      const shouldPlayOnStart = appState.video.isPlaying;
       stopVideoLoop();
+      appState.video.isPlaying = shouldPlayOnStart;
       appState.video.lastTick = performance.now();
       function tick(now) {
         if (appState.currentState !== "B") return;
@@ -1938,8 +1989,22 @@
     function updateVideoControlsUI() {
       const iconEl = document.getElementById("btnPlayPauseIcon");
       const labelEl = document.getElementById("btnPlayPauseLabel");
-      if (iconEl) iconEl.textContent = appState.video.isPlaying ? "⏸" : "▶";
+      if (iconEl) iconEl.textContent = appState.video.isPlaying ? "PAUSE" : "PLAY";
       if (labelEl) labelEl.textContent = appState.video.isPlaying ? "Pause" : "Play";
+    }
+
+    function fitDemoFocusTextToSingleLine() {
+      const el = document.getElementById("demoFocusText");
+      if (!el) return;
+
+      let sizePx = 11;
+      el.style.fontSize = `${sizePx}px`;
+      el.style.whiteSpace = "nowrap";
+
+      while (sizePx > 8 && el.scrollWidth > el.clientWidth) {
+        sizePx -= 0.5;
+        el.style.fontSize = `${sizePx}px`;
+      }
     }
 
     function updateVideoScrubberUI() {
@@ -2121,7 +2186,7 @@
         ctx.fillText("DEPTH STOP HAND", cx - 6, cy - 35);
         ctx.fillStyle = "#111";
         if (depthT >= 0.85) {
-          ctx.fillText("★ LOSS OF RESISTANCE (STOP!)", cx - 160, cy + 58);
+          ctx.fillText("LOSS OF RESISTANCE (STOP)", cx - 160, cy + 58);
         }
       } else if (stepNum === 5) {
         // Step 5: Spread Metzenbaum scissors at least 1 finger width
@@ -2211,6 +2276,7 @@
     window.addEventListener("resize", () => {
       if (appState.currentState === "B") {
         resizeAndDrawVideoCanvas();
+        fitDemoFocusTextToSingleLine();
       }
     });
 
@@ -2225,4 +2291,5 @@
     };
   </script>
 </body>
+
 </html>
