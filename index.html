@@ -22,6 +22,10 @@
       --border-thick: 3px solid #111111;
       --shadow-hard: 4px 4px 0px #111111;
       --shadow-hard-sm: 2px 2px 0px #111111;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-right: env(safe-area-inset-right, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --safe-left: env(safe-area-inset-left, 0px);
     }
 
     * {
@@ -228,6 +232,58 @@
 
     .wire-scroll::-webkit-scrollbar-thumb {
       background: #111;
+    }
+
+    /* iPad mode: same page, optimized spacing/readability for tablet touch use */
+    .ipad-mode {
+      padding-top: var(--safe-top);
+      padding-right: var(--safe-right);
+      padding-bottom: var(--safe-bottom);
+      padding-left: var(--safe-left);
+    }
+
+    .ipad-mode #researcherBar {
+      font-size: 13px;
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+
+    .ipad-mode #btnRestoreResearcherBar {
+      top: calc(var(--safe-top) + 6px);
+      right: calc(var(--safe-right) + 8px);
+      font-size: 11px;
+      padding: 4px 8px;
+    }
+
+    .ipad-mode #mainStage {
+      padding-left: 18px;
+      padding-right: 18px;
+    }
+
+    .ipad-mode #bottomActionBar {
+      padding-bottom: calc(12px + var(--safe-bottom));
+    }
+
+    .ipad-mode .wire-btn {
+      min-height: 74px;
+    }
+
+    .ipad-mode .wire-btn-sm {
+      min-height: 48px;
+    }
+
+    .ipad-mode .font-mono-wire {
+      letter-spacing: 0.01em;
+    }
+
+    @media (pointer: coarse) and (min-width: 768px) and (max-width: 1366px) {
+      .ipad-mode #headerStepTitle {
+        font-size: 1.2rem;
+      }
+
+      .ipad-mode #headerStatePill {
+        font-size: 0.78rem;
+      }
     }
   </style>
 </head>
@@ -1001,6 +1057,7 @@
       textMode: "COMPACT",          // Persistent user preference from top-right toggle: "FULL" or "COMPACT"
       temporaryFullStepIndex: null,  // Step index with temporary full-text expansion from compact checklist tap
       frameMode: "BEZEL",           // "BEZEL" (1024x768) or "FILL"
+      isIpadMode: false,
       // Track verification status per question ID: 'PENDING' | 'VERIFIED' | 'FAILED'
       questionStatus: {},
       // Store shuffled options per question ID so they stay consistent while viewing a question, and reshuffle on retry
@@ -1189,6 +1246,38 @@
         restoreBtn.classList.remove("hidden");
         vp.classList.add("devtools-hidden-bar");
       }
+    }
+
+    function detectIpadLikeDevice() {
+      const ua = navigator.userAgent || "";
+      const uaDataPlatform = navigator.userAgentData?.platform || "";
+      const platform = navigator.platform || "";
+      const touchPoints = navigator.maxTouchPoints || 0;
+      const coarseTouch = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
+      const inTabletWidthBand = Math.min(window.innerWidth, window.innerHeight) >= 744 && Math.max(window.innerWidth, window.innerHeight) <= 1366;
+
+      const isiPadUA = /iPad/i.test(ua);
+      const isiPadOSDesktopUA = (/Macintosh/i.test(ua) || /Mac/i.test(platform) || /macOS/i.test(uaDataPlatform)) && touchPoints > 1;
+
+      return (isiPadUA || isiPadOSDesktopUA) && coarseTouch && inTabletWidthBand;
+    }
+
+    function applyIpadDefaults() {
+      document.body.classList.add("ipad-mode");
+
+      // Prefer full-viewport mode on iPad to maximize usable simulation space.
+      const vp = document.getElementById("ipadViewport");
+      const btn = document.getElementById("btnToggleFrame");
+      const container = document.getElementById("ipadScreenContainer");
+      appState.frameMode = "FILL";
+      vp.classList.remove("viewport-bezel-mode");
+      vp.classList.add("viewport-fill-mode");
+      container.classList.remove("lg:p-2");
+      btn.textContent = "[Frame: Fill Browser Viewport]";
+
+      // Hide researcher chrome by default on iPad; keep quick restore control visible.
+      toggleResearcherBar(false);
+      logEvent("AUTO_IPAD_MODE", "Applied iPad defaults: full viewport and hidden researcher bar");
     }
 
     function resetEntireSession() {
@@ -2304,6 +2393,12 @@
     window.onload = function () {
       initVerificationState();
       populateResearcherDropdown();
+
+      appState.isIpadMode = detectIpadLikeDevice();
+      if (appState.isIpadMode) {
+        applyIpadDefaults();
+      }
+
       logEvent("SESSION_START", "Loaded Bülau Chest Tube 10-Step Lo-Fi Spatial UI Prototype");
       renderCurrentState();
     };
