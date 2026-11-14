@@ -1,0 +1,2228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Lo-Fi XR Wireframe — Bülau Chest Tube Insertion (10-Step Simulator UI)</title>
+  <!-- Load Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* =========================================================================
+       LO-FI WIREFRAME DESIGN TOKENS & ERGONOMIC TOUCH STYLES
+       ========================================================================= */
+    :root {
+      --paper: #f6f6f2;
+      --paper-alt: #eaeae4;
+      --ink: #111111;
+      --ink-muted: #4a4a46;
+      --border-heavy: 2px solid #111111;
+      --border-thick: 3px solid #111111;
+      --shadow-hard: 4px 4px 0px #111111;
+      --shadow-hard-sm: 2px 2px 0px #111111;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background-color: #262624;
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+      overscroll-behavior: none;
+      touch-action: manipulation;
+    }
+
+    .font-mono-wire {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    /* Wireframe Hatched Patterns for Lo-Fi Visual Hierarchy */
+    .bg-hatched {
+      background-image: repeating-linear-gradient(
+        -45deg,
+        #e5e5df,
+        #e5e5df 6px,
+        #f6f6f2 6px,
+        #f6f6f2 12px
+      );
+    }
+
+    .bg-hatched-dark {
+      background-image: repeating-linear-gradient(
+        -45deg,
+        #111111,
+        #111111 6px,
+        #2b2b28 6px,
+        #2b2b28 12px
+      );
+    }
+
+    .bg-dots {
+      background-image: radial-gradient(#b5b5ad 1px, transparent 1px);
+      background-size: 12px 12px;
+    }
+
+    /* Wireframe Cards & Buttons */
+    .wire-box {
+      background-color: var(--paper);
+      border: var(--border-heavy);
+      box-shadow: var(--shadow-hard);
+    }
+
+    .wire-box-flat {
+      background-color: var(--paper);
+      border: var(--border-heavy);
+    }
+
+    .wire-dashed {
+      background-color: #eeeee8;
+      border: 2px dashed #111111;
+    }
+
+    /* Oversized Ergonomic Touch Button (Min Height 68px for Gloved / Arm's-Length Reach) */
+    .wire-btn {
+      min-height: 68px;
+      border: var(--border-heavy);
+      box-shadow: var(--shadow-hard);
+      background-color: var(--paper);
+      color: var(--ink);
+      font-weight: 700;
+      transition: transform 0.06s ease, box-shadow 0.06s ease, background-color 0.06s ease, color 0.06s ease;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-align: left;
+      touch-action: manipulation;
+    }
+
+    .wire-btn:hover {
+      background-color: #ecece6;
+    }
+
+    .wire-btn:active {
+      transform: translate(3px, 3px);
+      box-shadow: 1px 1px 0px #111111;
+      background-color: #111111 !important;
+      color: #f6f6f2 !important;
+    }
+
+    .wire-btn-primary {
+      background-color: #111111;
+      color: #f6f6f2;
+    }
+
+    .wire-btn-primary:hover {
+      background-color: #292926;
+    }
+
+    .wire-btn-primary:active {
+      background-color: #f6f6f2 !important;
+      color: #111111 !important;
+    }
+
+    /* Compact Header Button */
+    .wire-btn-sm {
+      min-height: 44px;
+      border: var(--border-heavy);
+      box-shadow: var(--shadow-hard-sm);
+      background-color: var(--paper);
+      color: var(--ink);
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.06s ease, box-shadow 0.06s ease;
+      touch-action: manipulation;
+    }
+
+    .wire-btn-sm:active {
+      transform: translate(2px, 2px);
+      box-shadow: 0px 0px 0px #111111;
+      background-color: #111111;
+      color: #f6f6f2;
+    }
+
+    /* Custom Lo-Fi Range Scrubber for Video Player */
+    input[type="range"].wire-scrubber {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 16px;
+      background: #e2e2dc;
+      border: 2px solid #111111;
+      outline: none;
+      cursor: pointer;
+    }
+
+    input[type="range"].wire-scrubber::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 32px;
+      height: 36px;
+      background: #111111;
+      border: 2px solid #f6f6f2;
+      box-shadow: 2px 2px 0px #111111;
+      cursor: pointer;
+    }
+
+    /* Responsive iPad Frame Modes */
+    /* Mode 1: Framed 1024x768 iPad Bezel on wide desktop monitors */
+    .viewport-bezel-mode {
+      width: 1024px;
+      height: 768px;
+      max-width: 100vw;
+      max-height: calc(100dvh - 52px);
+      border: 14px solid #141413;
+      border-radius: 24px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65), 0 0 0 2px #444440;
+      overflow: hidden;
+      position: relative;
+      background-color: var(--paper);
+    }
+
+    /* Mode 2: Full Viewport Mode (Auto-activated on <=1180px or Chrome DevTools iPad Emulation) */
+    .viewport-fill-mode {
+      width: 100vw;
+      height: calc(100dvh - 44px);
+      border: none;
+      border-radius: 0;
+      overflow: hidden;
+      position: relative;
+      background-color: var(--paper);
+    }
+
+    .viewport-fill-mode.devtools-hidden-bar {
+      height: 100dvh;
+    }
+
+    /* Automatically switch to full-bleed when testing inside Chrome DevTools iPad Portrait/Landscape (<=1180px) */
+    @media (max-width: 1180px) {
+      .viewport-bezel-mode {
+        width: 100vw !important;
+        height: calc(100dvh - 44px) !important;
+        max-height: none !important;
+        border: none !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+      }
+      .viewport-bezel-mode.devtools-hidden-bar {
+        height: 100dvh !important;
+      }
+    }
+
+    /* Scrollbar styling inside wireframe panels */
+    .wire-scroll::-webkit-scrollbar {
+      width: 8px;
+    }
+    .wire-scroll::-webkit-scrollbar-track {
+      background: #e5e5df;
+      border-left: 2px solid #111;
+    }
+    .wire-scroll::-webkit-scrollbar-thumb {
+      background: #111;
+    }
+  </style>
+</head>
+<body class="flex flex-col items-center justify-start min-h-[100dvh]">
+
+  <!-- =========================================================================
+       RESEARCHER UTILITY & CHROME DEVTOOLS BAR (Collapsible for pure iPad view)
+       ========================================================================= -->
+  <div id="researcherBar" class="w-full bg-[#181816] text-[#f6f6f2] border-b-2 border-[#3c3c38] px-3 py-1.5 flex flex-wrap items-center justify-between gap-2 text-xs font-mono-wire z-50">
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="bg-[#f6f6f2] text-[#111] font-bold px-2 py-0.5 rounded-sm uppercase tracking-wider">XR Lo-Fi Testbed</span>
+      
+      <!-- Bezel / Viewport Toggle -->
+      <button id="btnToggleFrame" onclick="toggleFrameMode()" class="px-2.5 py-1 bg-[#2c2c29] hover:bg-[#3c3c38] border border-[#666] rounded-sm font-bold transition">
+        [Frame: 1024×768 iPad Bezel]
+      </button>
+
+      <!-- Step Quick-Jumper for Researcher Testing -->
+      <label class="flex items-center gap-1 bg-[#2c2c29] border border-[#666] px-2 py-0.5 rounded-sm">
+        <span class="text-[#aaa]">Jump:</span>
+        <select id="stepJumpSelect" onchange="researcherJumpToStep(this.value)" class="bg-transparent text-[#f6f6f2] font-bold focus:outline-none cursor-pointer">
+          <!-- Populated dynamically -->
+        </select>
+      </label>
+
+      <!-- Reset Current Step / Session -->
+      <button onclick="resetEntireSession()" class="px-2 py-1 bg-[#2c2c29] hover:bg-[#3c3c38] border border-[#666] rounded-sm text-[#ddd]" title="Reset all step verifications">
+        [↺ Reset Session]
+      </button>
+    </div>
+
+    <!-- Right: Live Telemetry Ticker & CSV Export -->
+    <div class="flex items-center gap-2 flex-wrap">
+      <div id="telemetryTicker" class="hidden md:flex items-center gap-1.5 bg-[#111] border border-[#444] px-2.5 py-1 rounded-sm text-[11px] text-[#bbb] max-w-[320px] truncate">
+        <span class="inline-block w-2 h-2 rounded-full bg-white animate-pulse"></span>
+        <span id="telemetryLastEvent">LOG READY (0 events)</span>
+      </div>
+
+      <button onclick="exportTelemetryCSV()" class="px-2.5 py-1 bg-[#f6f6f2] text-[#111] font-bold border border-white rounded-sm hover:bg-[#ddd] transition">
+        ⬇ Export CSV (<span id="telemetryCount">0</span>)
+      </button>
+
+      <button onclick="openTelemetryModal()" class="px-2 py-1 bg-[#2c2c29] hover:bg-[#3c3c38] border border-[#666] rounded-sm">
+        [📋 View Log]
+      </button>
+
+      <button onclick="toggleResearcherBar(false)" class="px-2 py-1 bg-[#2c2c29] hover:bg-[#3c3c38] border border-[#666] rounded-sm text-[#aaa]" title="Hide utility bar for full-bleed DevTools screenshot">
+        [Hide Bar]
+      </button>
+    </div>
+  </div>
+
+  <!-- Floating Mini Pill to Restore Researcher Bar when hidden -->
+  <button id="btnRestoreResearcherBar" onclick="toggleResearcherBar(true)" class="hidden fixed top-1 right-2 z-50 bg-[#111] text-[#f6f6f2] border border-[#777] px-2 py-0.5 text-[10px] font-mono-wire rounded opacity-75 hover:opacity-100">
+    [+ Researcher Bar]
+  </button>
+
+  <!-- =========================================================================
+       IPAD LANDSCAPE VIEWPORT CONTAINER (1024x768 Default / 100dvh Responsive)
+       ========================================================================= -->
+  <div id="ipadScreenContainer" class="flex-1 w-full flex items-center justify-center p-0 lg:p-2">
+    <main id="ipadViewport" class="viewport-bezel-mode flex flex-col justify-between bg-dots">
+
+      <!-- =====================================================================
+           PERSISTENT TOP SPATIAL UI HEADER (Step Progress, Status Pill, Text Toggle)
+           ===================================================================== -->
+      <header class="w-full bg-[#f6f6f2] border-b-[3px] border-[#111111] px-4 py-2.5 flex flex-col gap-2 shrink-0 z-20">
+        <div class="flex items-center justify-between gap-3">
+          <!-- Left: Step Number & Title -->
+          <div class="flex items-center gap-2.5 min-w-0">
+            <span id="headerStepBadge" class="bg-[#111111] text-[#f6f6f2] font-mono-wire font-bold text-sm md:text-base px-2.5 py-1 shrink-0 border-2 border-[#111]">
+              STEP 1 / 10
+            </span>
+            <h1 id="headerStepTitle" class="text-lg md:text-xl font-extrabold uppercase tracking-tight truncate">
+              Select & Prepare Drainage Tube
+            </h1>
+          </div>
+
+          <!-- Right: State Pill + Persistent Text Density Toggle -->
+          <div class="flex items-center gap-2 shrink-0">
+            <span id="headerStatePill" class="hidden sm:inline-block font-mono-wire text-xs font-bold uppercase px-2.5 py-1 border-2 border-[#111] bg-hatched">
+              STATE A: BRIEFING / EXECUTION
+            </span>
+
+            <button id="btnTextModeToggle" onclick="toggleTextDensity()" class="wire-btn-sm px-3 py-1.5 text-xs md:text-sm font-mono-wire flex items-center gap-1.5" title="Toggle between Full Paragraph and Glanceable 3-Bullet Checklist">
+              <span>👁 TEXT:</span>
+              <span id="labelTextMode" class="underline font-extrabold">FULL</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 10-Segment Step Progress Bar with Verification Indicators -->
+        <div id="stepProgressBar" class="grid grid-cols-10 gap-1.5 w-full pt-0.5">
+          <!-- Populated dynamically by JS -->
+        </div>
+      </header>
+
+      <!-- =====================================================================
+           MAIN DYNAMIC VIEWPORT BODY (Renders State A, B, C, D, or Summary)
+           ===================================================================== -->
+      <section id="mainStage" class="flex-1 w-full overflow-y-auto wire-scroll p-4 md:p-5 flex flex-col justify-between relative">
+        <!-- Populated dynamically by renderCurrentState() -->
+      </section>
+
+      <!-- =====================================================================
+           PERSISTENT BOTTOM ERGONOMIC ACTION BAR (Min-Height 72px Touch Targets)
+           ===================================================================== -->
+      <footer id="bottomActionBar" class="w-full bg-[#eaeae4] border-t-[3px] border-[#111111] px-4 py-3 shrink-0 z-20">
+        <!-- Populated dynamically by renderCurrentState() -->
+      </footer>
+
+    </main>
+  </div>
+
+  <!-- =========================================================================
+       TELEMETRY LOG MODAL (For Inspecting / Copying CSV Without Downloading)
+       ========================================================================= -->
+  <div id="telemetryModal" class="hidden fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-4">
+    <div class="wire-box w-full max-w-3xl max-h-[85vh] flex flex-col bg-[#f6f6f2] p-5 gap-4">
+      <div class="flex items-center justify-between border-b-2 border-[#111] pb-3">
+        <div>
+          <h2 class="text-lg font-extrabold uppercase font-mono-wire">Session Telemetry Log (CSV Format)</h2>
+          <p class="text-xs text-[#4a4a46] font-mono-wire">Tracks task-switching, video playback controls, text toggles, quiz attempts, and remediation loops.</p>
+        </div>
+        <button onclick="closeTelemetryModal()" class="wire-btn-sm px-3 py-1 font-mono-wire text-sm">[✕ Close]</button>
+      </div>
+
+      <textarea id="telemetryCsvTextarea" readonly class="w-full flex-1 min-h-[260px] p-3 font-mono-wire text-xs bg-white border-2 border-[#111] focus:outline-none select-all" style="user-select: text; -webkit-user-select: text;"></textarea>
+
+      <div class="flex items-center justify-between gap-3">
+        <span id="copyFeedbackMsg" class="text-xs font-mono-wire font-bold text-[#111]">Ready to copy or download.</span>
+        <div class="flex items-center gap-3">
+          <button onclick="copyTelemetryToClipboard()" class="wire-btn-sm px-4 py-2 font-mono-wire text-xs">[📋 Copy CSV to Clipboard]</button>
+          <button onclick="exportTelemetryCSV()" class="wire-btn-sm px-4 py-2 font-mono-wire text-xs bg-[#111] text-white">[⬇ Download .CSV File]</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       APPLICATION DATA & STATE MACHINE LOGIC
+       ========================================================================= -->
+  <script>
+    /* =========================================================================
+       1. COMPLETE 10-STEP CLINICAL DATASET (BÜLAU CHEST TUBE INSERTION)
+       ========================================================================= */
+    const STEPS_DATA = [
+      {
+        stepNumber: 1,
+        shortTitle: "Select & Prepare Drainage Tube",
+        actionPrompt: "Select the appropriate chest tube caliber for your patient and estimate the target insertion depth. Completely remove the metal trocar. Using your dominant hand, clamp the dressing forceps (Kornzange) firmly 1 cm behind the drainage tip.",
+        compactBullets: [
+          "1. Estimate tube length & caliber for patient",
+          "2. Pull out and discard metal trocar completely",
+          "3. Clamp Kornzange firmly 1 cm behind drain tip (dominant hand)"
+        ],
+        criticalCue: "Verify lumen and side holes are intact. Ensure clamped forceps sit flush without widening the tube profile, leaving 1 cm of soft tip protruding.",
+        demoFocus: "Estimating insertion length against thorax, complete removal of obsolete metal trocar, and clamping Kornzange flush 1 cm behind the tip in dominant hand.",
+        rollbackTarget: null,
+        questions: [
+          {
+            id: "Q1.1",
+            label: "Q1.1: Tube & Trocar State",
+            questionText: "Look at the drainage tube you selected: how is the inner metal trocar currently positioned?",
+            gateBadge: "HARD BLOCK: FIX BEFORE PROCEEDING",
+            riskText: "Inserting a chest tube with a trocar is obsolete and risks fatal perforation of the lung, heart, liver, or spleen; selecting too thin a drain fails to evacuate a hemothorax.",
+            fixText: "Completely pull out and discard the metal trocar, verify appropriate tube caliber/length against the thorax, and re-verify before proceeding.",
+            options: [
+              {
+                text: "The trocar has been completely pulled out and set aside; only the flexible tube with intact side holes remains.",
+                isOptimal: true,
+                category: "Optimal State"
+              },
+              {
+                text: "The trocar is pulled back a few centimeters so the soft tip is free, but the metal rod remains inside the tube to stiffen it.",
+                isOptimal: false,
+                category: "Partial Trocar Error"
+              },
+              {
+                text: "The trocar is still fully inserted up to the tip of the drain.",
+                isOptimal: false,
+                category: "Critical Trocar Hazard"
+              },
+              {
+                text: "The trocar is removed, but I selected a thin-caliber drain despite suspecting a hemothorax (or did not estimate insertion depth against the chest).",
+                isOptimal: false,
+                category: "Caliber / Length Estimation Error"
+              }
+            ]
+          },
+          {
+            id: "Q1.2",
+            label: "Q1.2: Forceps Clamping Position",
+            questionText: "Where and how are the dressing forceps (Kornzange) clamped onto the drain in your dominant hand?",
+            gateBadge: "HARD BLOCK: FIX BEFORE PROCEEDING",
+            riskText: "Clamping directly at the tip damages the drain and prevents fingertip-to-drain contact in Step 8, while a loose or tilted grip causes the forceps to slip during insertion.",
+            fixText: "Unclamp and re-clamp the dressing forceps firmly and flush ~1 cm behind the drainage tip in your dominant hand.",
+            options: [
+              {
+                text: "Clamped firmly 1 cm behind the tip so the soft tip protrudes, with the jaws flush so they barely widen the tube's profile.",
+                isOptimal: true,
+                category: "Optimal State"
+              },
+              {
+                text: "Clamped 3–4 cm behind the tip, leaving a long floppy section of tubing ahead of the forceps.",
+                isOptimal: false,
+                category: "Over-Protrusion Error"
+              },
+              {
+                text: "Clamped directly across the very tip of the drainage tube so nothing protrudes past the metal jaws.",
+                isOptimal: false,
+                category: "Tip-Flush Clamping Error"
+              },
+              {
+                text: "Clamped 1 cm behind the tip, but the forceps sit loosely or at a tilted angle that widens the cross-section.",
+                isOptimal: false,
+                category: "Loose / Tilted Grip Error"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        stepNumber: 2,
+        shortTitle: "Landmark Identification & Skin Incision",
+        actionPrompt: "Palpate the Triangle of Safety (4th/5th intercostal space, one patient hand-width below the axilla) with your non-dominant hand. Make a 4–5 cm skin incision starting from the lateral edge of the pectoralis major, directed dorsally along the rib course through cutis and subcutis. Safely set down the scalpel.",
+        compactBullets: [
+          "1. Palpate 4th/5th ICS (1 hand-width below axilla)",
+          "2. Incise 4–5 cm from pec major dorsally along rib (cutis & subcutis only)",
+          "3. Safely set down scalpel on tray"
+        ],
+        criticalCue: "Do not orient by the nipple (mamillary line is unreliable). If using a fenestrated drape, make a pressure mark with a hard object beforehand.",
+        demoFocus: "Palpating Triangle of Safety (pectoralis major, latissimus dorsi, 4th/5th ICS via transverse hand-width below axilla), 4–5 cm incision through cutis/subcutis, and safe scalpel disposal.",
+        rollbackTarget: null,
+        questions: [
+          {
+            id: "Q2.1",
+            label: "Q2.1: Anatomical Landmarking",
+            questionText: "How did you determine the incision site within the Triangle of Safety?",
+            gateBadge: "CONSUMABLE PAD WARNING / LANDMARK FIX",
+            riskText: "Orienting by the nipple is unreliable and often places access too low (caudal), risking injury to the diaphragm, liver (right), or spleen (left).",
+            fixText: "Re-measure one hand-width below the axilla (4th/5th ICS). If you already cut too low on the simulator pad, make a new incision at the correct 4th/5th ICS if pad space permits.",
+            options: [
+              {
+                text: "Palpated the lateral edge of the pectoralis major and anterior edge of the latissimus dorsi, placing the site at the 4th/5th ICS (one patient hand-width below the axilla).",
+                isOptimal: true,
+                category: "Optimal State"
+              },
+              {
+                text: "Aligned the incision horizontally with the nipple (mamillary line) without measuring a hand-width below the axilla.",
+                isOptimal: false,
+                category: "Mamillary Line Orientation Error"
+              },
+              {
+                text: "Placed the incision lower on the chest wall (6th/7th ICS, near the costal margin).",
+                isOptimal: false,
+                category: "Caudal Placement Error"
+              },
+              {
+                text: "Applied the fenestrated drape first without pressing a skin mark beforehand, and estimated the rib space through the drape window.",
+                isOptimal: false,
+                category: "Unmarked Draping Orientation Loss"
+              }
+            ]
+          },
+          {
+            id: "Q2.2",
+            label: "Q2.2: Incision Depth & Sharps Safety",
+            questionText: "Inspect your skin incision and your work area: what is the depth, length, and scalpel status?",
+            gateBadge: "HARD BLOCK: SHARPS & INCISION CHECK",
+            riskText: "Transecting muscle with a scalpel causes severe bleeding, while an incision under 4 cm prevents the opposing-motion finger swap in Step 6.",
+            fixText: "Extend the skin/subcutis incision to a full 4–5 cm if too short, and place the scalpel safely on the instrument tray before proceeding.",
+            options: [
+              {
+                text: "The incision is 4–5 cm long parallel to the rib through the cutis and subcutis down to the muscle surface, and the scalpel is safely set down.",
+                isOptimal: true,
+                category: "Optimal State"
+              },
+              {
+                text: "The incision is only 1.5–2 cm long (too tight to fit both a finger and an instrument simultaneously).",
+                isOptimal: false,
+                category: "Incision Too Short Error"
+              },
+              {
+                text: "The scalpel cut deeply through the intercostal muscle fibers rather than stopping at the subcutis.",
+                isOptimal: false,
+                category: "Sharp Muscle Transection Error"
+              },
+              {
+                text: "The incision is 4–5 cm through the subcutis, but the scalpel is still in my hand or resting loose on the drape.",
+                isOptimal: false,
+                category: "Sharps Safety Hazard"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        stepNumber: 3,
+        shortTitle: "Blunt Dissection to Upper Rib Margin",
+        actionPrompt: "Take the curved Metzenbaum scissors with the convex curve pointing cranially (upward). Bluntly dissect through the musculature until the closed tips contact the middle of the rib, then glide cranially with closed tips to the upper edge of the rib.",
+        compactBullets: [
+          "1. Orient Metzenbaum scissor curve cranially (upward)",
+          "2. Bluntly dissect muscle until closed tips touch mid-rib",
+          "3. Glide closed tips cranially to UPPER edge of rib"
+        ],
+        criticalCue: "Always enter at the upper (superior) edge of the rib because the intercostal nerves and vessels run in the costal groove at the lower edge.",
+        demoFocus: "Cranially arched Metzenbaum scissors spreading muscle bluntly, establishing tactile bone contact on mid-rib, and gliding closed tips onto the superior rib margin.",
+        rollbackTarget: null,
+        questions: [
+          {
+            id: "Q3.1",
+            label: "Q3.1: Scissor Curve & Blunt Dissection",
+            questionText: "How did you advance the curved Metzenbaum scissors through the muscle layer toward the rib?",
+            gateBadge: "REVERSIBLE KINEMATIC FIX",
+            riskText: "Sharp cutting causes muscular bleeding, and advancing without rib contact risks premature uncontrolled pleural entry.",
+            fixText: "Orient the convex curve cranially, keep the blades closed to avoid cutting muscle, and tap the closed tips directly against the middle of the rib.",
+            options: [
+              {
+                text: "Used blunt dissection with the curved scissor tips pointing cranially (convexity upward) until feeling bony contact near the middle of the rib.",
+                isOptimal: true,
+                category: "Optimal State"
+              },
+              {
+                text: "Bluntly dissected down to the rib, but held the scissors with the curve pointing caudally (downward toward the lower rib edge).",
+                isOptimal: false,
+                category: "Inverted Scissor Curve Error"
+              },
+              {
+                text: "Used snipping/cutting motions with the scissor blades to sever the muscle fibers down to the rib.",
+                isOptimal: false,
+                category: "Sharp Muscle Cutting Error"
+              },
+              {
+                text: "Pushed through the tissue without clearly feeling the hard surface of the rib with the scissor tips.",
+                isOptimal: false,
+                category: "Missing Rib Contact Error"
+              }
+            ]
+          },
+          {
+            id: "Q3.2",
+            label: "Q3.2: Target Rib Margin",
+            questionText: "After contacting the rib, where did you glide the closed scissor tips to prepare for pleural entry?",
+            gateBadge: "HARD BLOCK: NEUROVASCULAR PROTECTION",
+            riskText: "Entering at the lower edge of a rib—or too far cranially against the rib above—lacerates the intercostal neurovascular bundle sitting in the inferior costal groove.",
+            fixText: "Keep the scissors closed, locate the middle of the rib surface again, and glide strictly onto its upper (superior) bony edge.",
+            options: [
+              {
+                text: "Glided cranially over the bone surface until resting directly on the upper (superior) edge of the rib.",
+                isOptimal: true,
+                category: "Optimal State"
+              },
+              {
+                text: "Slid downward to rest along the lower (inferior) edge of the rib.",
+                isOptimal: false,
+                category: "Lower Rib Edge Hazard"
+              },
+              {
+                text: "Pushed well above the upper edge of the rib, right against the underside of the overlying rib.",
+                isOptimal: false,
+                category: "Overlying Rib Costal Groove Hazard"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        stepNumber: 4,
+        shortTitle: "Bimanual Controlled Pleural Perforation",
+        actionPrompt: "Keep the curved Metzenbaum scissors closed (convexity cranial). Brace bimanually: your non-dominant hand supports the shaft and limits penetration depth. Advance from the wrist at the upper rib edge under pressure with slight twisting movements until the pleura gives way.",
+        compactBullets: [
+          "1. Keep scissors closed (curve pointing cranially)",
+          "2. Brace shaft with non-dominant hand as depth stop",
+          "3. Push from wrist with slight twists until loss of resistance"
+        ],
+        criticalCue: "Stop advancing immediately upon feeling the loss of resistance as the parietal pleura is perforated.",
+        demoFocus: "Two-handed bimanual grip (non-dominant hand bracing shaft at skin level to limit depth) and wrist-driven slight twisting pressure until pleural perforation.",
+        rollbackTarget: null,
+        questions: [
+          {
+            id: "Q4.1",
+            label: "Q4.1: Bimanual Depth Control & Perforation",
+            questionText: "How did you hold and advance the closed Metzenbaum scissors to perforate the parietal pleura?",
+            gateBadge: "POSTURAL RESET / DEPTH STOP GATE",
+            riskText: "A one-handed approach without depth limitation risks plunging deeply into the thorax upon loss of resistance, injuring the lung, heart, or great vessels.",
+            fixText: "Place your non-dominant hand firmly against the scissor shaft near the skin as a physical depth guard, and advance with controlled wrist twists until resistance gives way.",
+            options: [
+              {
+                text: "Braced the scissor shaft with my non-dominant hand as a depth stop and pushed from the wrist with slight twisting movements until feeling a loss of resistance.",
+                isOptimal: true,
+                category: "Optimal State"
+              },
+              {
+                text: "Pushed the scissors forward using only my dominant hand while my non-dominant hand rested elsewhere.",
+                isOptimal: false,
+                category: "Unbraced One-Handed Plunge Risk"
+              },
+              {
+                text: "Perforated the pleura with the scissor blades partially open or cutting rather than closed and twisting.",
+                isOptimal: false,
+                category: "Open-Blade Perforation Error"
+              },
+              {
+                text: "Applied pressure with two hands, but have not yet felt the pleura give way (no loss of resistance).",
+                isOptimal: false,
+                category: "Incomplete Pleural Penetration"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        stepNumber: 5,
+        shortTitle: "Spread Open Metzenbaum Scissors",
+        actionPrompt: "Stand frontally in front of the Metzenbaum scissors, keeping them perpendicular to your body. Hold your depth position inside the pleura and spread the scissors open to at least one finger's width.",
+        compactBullets: [
+          "1. Stand frontally (scissors perpendicular to your body)",
+          "2. Confirm pleural entry (hissing air / fluid)",
+          "3. Spread scissors open at least 1 finger's width"
+        ],
+        criticalCue: "Listen for hissing of escaping air or observe blood outflow confirming pleural opening. Maintain depth while spreading.",
+        demoFocus: "Frontal practitioner posture perpendicular to chest wall, audible air hiss confirmation, and wide spreading of Metzenbaum blades to a full finger's width.",
+        rollbackTarget: null,
+        questions: [
+          {
+            id: "Q5.1",
+            label: "Q5.1: Pleural Dilation & Frontal Posture",
+            questionText: "What happened when you dilated the pleural opening with the Metzenbaum scissors?",
+            gateBadge: "REVERSIBLE KINEMATIC FIX",
+            riskText: "An opening narrower than a finger's width makes subsequent finger and drain insertion difficult and risks organ injury; ignoring missing signs leads to extrapleural misplacement.",
+            fixText: "Square your posture perpendicular to the chest wall, verify full intrapleural depth, and spread the scissor blades firmly to at least the width of your index finger.",
+            options: [
+              {
+                text: "Stood frontally keeping the scissors perpendicular to my body, confirmed pleural entry (hissing air / fluid), and spread the blades at least one finger's width.",
+                isOptimal: true,
+                category: "Optimal State"
+              },
+              {
+                text: "Spread the scissors only slightly (less than a finger's width) before preparing to withdraw them.",
+                isOptimal: false,
+                category: "Insufficient Dilation Width"
+              },
+              {
+                text: "Stood at a slanted angle or allowed the scissor tips to slip backward out of the pleura while spreading.",
+                isOptimal: false,
+                category: "Slanted Posture / Lost Depth Error"
+              },
+              {
+                text: "Spread the blades in the tissue, but noticed no loss of resistance or pleural entry signs.",
+                isOptimal: false,
+                category: "Unconfirmed Extrapleural Pocket"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        stepNumber: 6,
+        shortTitle: "Opposing-Motion Swap (Scissors Out / Finger In)",
+        actionPrompt: "Pull out the opened Metzenbaum scissors while simultaneously introducing the index finger of your non-dominant hand directly into the perforation in an opposing motion to secure the access.",
+        compactBullets: [
+          "1. Keep Metzenbaum scissors SPREAD OPEN while pulling back",
+          "2. Simultaneously slide non-dominant index finger into tract",
+          "3. Feel smooth parietal pleura (watch for sharp rib splinters)"
+        ],
+        criticalCue: "The simultaneous opposing motion prevents tissue layers from shifting and closing the tract. Use caution if ribs are fractured (sharp bone edges).",
+        demoFocus: "Synchronized crossover motion: withdrawing the opened Metzenbaum scissors while simultaneously sliding the non-dominant index finger into the dilated pleural opening.",
+        rollbackTarget: 5,
+        questions: [
+          {
+            id: "Q6.1",
+            label: "Q6.1: Opposing-Motion Tract Swap",
+            questionText: "How did you transition from the Metzenbaum scissors to your non-dominant index finger?",
+            gateBadge: "STEP-BACK ROLLBACK REQUIRED (TO STEP 5)",
+            riskText: "Inserting the finger too late without an opposing motion loses the dissected access tract, requiring renewed dissection with bleeding risk or extrapleural misplacement.",
+            fixText: "If the foam channel collapsed on your simulator, tap 'Roll Back to Step 5' to re-insert and spread the scissors, then slide your index finger in simultaneously as the opened blades exit.",
+            options: [
+              {
+                text: "Pulled the opened scissors back while simultaneously sliding my non-dominant index finger into the perforation in an opposing motion, feeling smooth pleura.",
+                isOptimal: true,
+                category: "Optimal State"
+              },
+              {
+                text: "Pulled the scissors completely out of the incision first, and then tried to push my finger in afterward.",
+                isOptimal: false,
+                category: "Sequential Swap — Tract Lost"
+              },
+              {
+                text: "Closed the scissor blades inside the chest before pulling them out, causing the tract to narrow.",
+                isOptimal: false,
+                category: "Closed-Blade Withdrawal Error"
+              },
+              {
+                text: "Inserted my finger, but I feel rough muscle/fascia instead of smooth pleura (or did not check for sharp rib fracture splinters).",
+                isOptimal: false,
+                category: "Extrapleural Layer Misinterpretation"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        stepNumber: 7,
+        shortTitle: "360° Intrapleural Palpation",
+        actionPrompt: "Perform a 360° sweep of the pleura from the inside with your index finger, palpating the inner surface of the ribs. Confirm intrapleural position, release minor adhesions gently, and leave your finger parked inside the perforation.",
+        compactBullets: [
+          "1. Rotate index finger 360° inside pleural cavity",
+          "2. Palpate ribs from inside & rule out organ/diaphragm injury",
+          "3. KEEP FINGER PARKED inside perforation as guide"
+        ],
+        criticalCue: "Confirm true intrapleural position and rule out diaphragm rupture. Never forcefully tear adhesions, and do not remove your finger early.",
+        demoFocus: "Full 360° internal finger rotation palpating smooth pleura and internal rib surfaces, keeping the index finger parked in the tract afterward.",
+        rollbackTarget: 5,
+        questions: [
+          {
+            id: "Q7.1",
+            label: "Q7.1: 360° Sweep & Finger Guide Parking",
+            questionText: "What did you confirm during palpation, and where is your index finger right now?",
+            gateBadge: "HARD BLOCK / TRACT ROLLBACK GATE",
+            riskText: "Omitting the 360° sweep risks placing the drain into the lung or abdomen, while removing the finger early collapses the access tract.",
+            fixText: "Re-insert your index finger (or roll back to Step 5 if the tract collapsed), verify 360° internal rib contact, and leave your finger parked inside the opening.",
+            options: [
+              {
+                text: "Rotated my finger 360° feeling the smooth inner rib surfaces and pleura (ruling out organ contact/adhesions), and left my finger parked inside the opening.",
+                isOptimal: true,
+                category: "Optimal State"
+              },
+              {
+                text: "Completed the 360° palpation, and then pulled my finger out of the chest wall to pick up the chest tube.",
+                isOptimal: false,
+                category: "Premature Finger Withdrawal"
+              },
+              {
+                text: "My fingertip only reached the intercostal muscles and could not sweep 360° along the inner surface of the ribs.",
+                isOptimal: false,
+                category: "Shallow Extrapleural Finger Position"
+              },
+              {
+                text: "Felt resistance/adhesions inside the cavity and pushed forcefully to break them.",
+                isOptimal: false,
+                category: "Forceful Adhesion Tearing Hazard"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        stepNumber: 8,
+        shortTitle: "Drain Insertion & Directional Alignment",
+        actionPrompt: "Pull your intrapleural index finger slightly back to the perforation opening. Insert the forceps-clamped drain until the 1 cm protruding tip contacts your fingertip. Turn the forceps to align ventro-cranially (pneumothorax) or dorso-cranially/dorso-caudally (hemothorax), then open the forceps.",
+        compactBullets: [
+          "1. Pull finger back to inner pleural opening",
+          "2. Touch 1 cm drain tip directly onto your fingertip",
+          "3. Rotate forceps to target direction, THEN open forceps"
+        ],
+        criticalCue: "Your finger acts like a guidewire. Only open the forceps after establishing tip-to-finger contact and aligning the trajectory.",
+        demoFocus: "Tactile rendezvous of the 1 cm protruding drain tip onto the intrapleural fingertip, rotational alignment of the forceps, and releasing the forceps lock.",
+        rollbackTarget: 7,
+        questions: [
+          {
+            id: "Q8.1",
+            label: "Q8.1: Fingertip-to-Drain Rendezvous",
+            questionText: "How did you introduce the clamped drainage tube into the pleural opening?",
+            gateBadge: "HARD BLOCK: GUIDEWIRE FINGER CONTACT",
+            riskText: "Advancing without fingertip-to-drain contact frequently tunnels the drain into subcutaneous tissue (causing subcutaneous emphysema and tension pneumothorax).",
+            fixText: "Keep your index finger at the inner pleural opening and touch the 1 cm soft drain tip directly against your fingertip before angling or unclamping.",
+            options: [
+              {
+                text: "Pulled my intrapleural finger slightly back to the inner opening, advanced the forceps in my dominant hand until the 1 cm protruding drain tip touched my fingertip, and kept the forceps closed.",
+                isOptimal: true,
+                category: "Optimal State"
+              },
+              {
+                text: "Pushed the clamped drain into the incision alongside my finger without feeling direct contact between the 1 cm drain tip and my fingertip.",
+                isOptimal: false,
+                category: "Blind Insertion Without Finger Contact"
+              },
+              {
+                text: "Pulled my finger completely out of the incision to make room for the forceps and tube.",
+                isOptimal: false,
+                category: "Missing Finger Guidewire"
+              }
+            ]
+          },
+          {
+            id: "Q8.2",
+            label: "Q8.2: Directional Alignment & Unclamping",
+            questionText: "How did you align the tube and when did you open the dressing forceps?",
+            gateBadge: "STEP-BACK ROLLBACK / RE-CLAMP GATE",
+            riskText: "Opening the forceps before proper alignment causes subcutaneous tunneling, organ injury, or ineffective drainage direction.",
+            fixText: "If the forceps opened prematurely, withdraw the tube, re-clamp 1 cm behind the tip, guide the tip onto your intrapleural finger, rotate into alignment, and then open the forceps.",
+            options: [
+              {
+                text: "Kept the drain tip on my finger, rotated the forceps to aim ventro-cranially (for pneumothorax) or dorso-caudally/dorso-cranially (for hemothorax), and only then opened the forceps.",
+                isOptimal: true,
+                category: "Optimal State"
+              },
+              {
+                text: "Opened the forceps as soon as the tip entered the skin incision, before rotating into the target anatomical direction.",
+                isOptimal: false,
+                category: "Premature Forceps Release"
+              },
+              {
+                text: "Aimed the tube straight medially toward the mediastinum/heart, or aimed opposite to the clinical indication.",
+                isOptimal: false,
+                category: "Malaligned Trajectory Error"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        stepNumber: 9,
+        shortTitle: "Forceps Removal & Advancing to Target Depth",
+        actionPrompt: "Pull out the opened forceps and set them aside without grasping tissue. Keeping your index finger in place as a guiding rail, advance the drainage tube smoothly over your finger to the estimated length mark.",
+        compactBullets: [
+          "1. Withdraw OPENED forceps carefully (do not pinch tissue)",
+          "2. Advance drain over guiding finger to estimated length",
+          "3. Verify last side hole lies completely inside chest cavity"
+        ],
+        criticalCue: "Read the centimeter markings on the tube and ensure all side holes lie completely intrathoracically.",
+        demoFocus: "Withdrawing open Kornzange safely, manually advancing the tube over the stationary guiding finger, and checking centimeter markings so the last side hole clears the chest wall.",
+        rollbackTarget: null,
+        questions: [
+          {
+            id: "Q9.1",
+            label: "Q9.1: Open Forceps Withdrawal & Feeding",
+            questionText: "How did you remove the forceps and advance the chest tube?",
+            gateBadge: "REVERSIBLE KINEMATIC FIX",
+            riskText: "Closing forceps during withdrawal pinches and tears intercostal tissue; pushing against resistance risks lung or mediastinal perforation.",
+            fixText: "Ensure the forceps exit open, and advance the drain gently over your guiding finger without forcing against resistance.",
+            options: [
+              {
+                text: "Withdrew the forceps in the opened position without pinching tissue, and fed the drain smoothly over my stationary intrapleural index finger to the target depth.",
+                isOptimal: true,
+                category: "Optimal State"
+              },
+              {
+                text: "Re-closed the forceps jaws while pulling them out, or snagged subcutaneous tissue.",
+                isOptimal: false,
+                category: "Tissue Pinching During Withdrawal"
+              },
+              {
+                text: "Felt strong mechanical resistance or kinking inside the cavity but continued pushing the tube forward.",
+                isOptimal: false,
+                category: "Forced Advancement Against Resistance"
+              }
+            ]
+          },
+          {
+            id: "Q9.2",
+            label: "Q9.2: Sentinel Side-Hole Depth Check",
+            questionText: "Look at the centimeter markings on the chest tube at the skin level: where is the last side hole (sentinel eye)?",
+            gateBadge: "HARD BLOCK: SENTINEL SIDE-HOLE DEPTH",
+            riskText: "A side hole resting outside or in the chest wall causes air leaks and subcutaneous emphysema, while over-insertion causes kinking, pain, or organ perforation.",
+            fixText: "Slide the tube in or out over your guiding finger until all side holes sit safely inside the pleural cavity at your target centimeter mark.",
+            options: [
+              {
+                text: "The tube is at the pre-estimated depth mark, and all side holes lie completely inside the thoracic cavity.",
+                isOptimal: true,
+                category: "Optimal State"
+              },
+              {
+                text: "The last side hole is still visible outside the skin or sits within the dissected chest wall tract.",
+                isOptimal: false,
+                category: "Shallow Insertion — Side Hole Exposed"
+              },
+              {
+                text: "The tube was pushed in as far as it would go, well past the estimated patient depth mark.",
+                isOptimal: false,
+                category: "Excessive Insertion Depth Error"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        stepNumber: 10,
+        shortTitle: "Functional Check & Finger Withdrawal",
+        actionPrompt: "Verify respiratory fogging of the inserted drain (or blood outflow). Pull out your guiding index finger next to the drain without displacing it (stabilizing the drain with your dominant hand). Keep the drain clamped or attach a Heimlich valve (during spontaneous breathing).",
+        compactBullets: [
+          "1. Check tube for respiratory fogging / fluid outflow",
+          "2. Stabilize drain with dominant hand while sliding finger out",
+          "3. Clamp drain or attach Heimlich valve immediately"
+        ],
+        criticalCue: "Absence of fogging indicates kinking or extrapleural misplacement. Prevent air entry via an open drain during spontaneous breathing.",
+        demoFocus: "Observing condensation fogging inside the drain, two-handed stabilization while withdrawing the index finger, and immediate clamping / Heimlich valve placement.",
+        rollbackTarget: null,
+        questions: [
+          {
+            id: "Q10.1",
+            label: "Q10.1: Intrapleural Functional Check",
+            questionText: "Before removing your finger, what functional signs did you verify in the tube?",
+            gateBadge: "HARD BLOCK: FUNCTIONAL VERIFICATION",
+            riskText: "Absence of respiratory fogging or outflow indicates kinking or undetected extrapleural misplacement.",
+            fixText: "Verify with your intrapleural finger that the tube passes cleanly through the pleural perforation without kinking and check for lumen condensation.",
+            options: [
+              {
+                text: "Observed respiratory condensation (fogging) inside the clear tube lumen and/or expected fluid/blood outflow, while my finger confirmed smooth intrathoracic entry.",
+                isOptimal: true,
+                category: "Optimal State"
+              },
+              {
+                text: "Did not check for fogging/outflow, or noticed no signs of intrapleural function.",
+                isOptimal: false,
+                category: "Missing Functional Signs Overlooked"
+              }
+            ]
+          },
+          {
+            id: "Q10.2",
+            label: "Q10.2: Finger Withdrawal & Air-Entry Prevention",
+            questionText: "How did you withdraw your guiding finger and secure the open end of the drain?",
+            gateBadge: "HARD BLOCK: AIR-ENTRY & DISLOCATION CHECK",
+            riskText: "Allowing the tube to slip out exposes side holes (leakage/misplacement), and leaving the drain open during spontaneous breathing draws room air into the thorax, causing a tension pneumothorax.",
+            fixText: "Immediately clamp the drain (or attach a Heimlich valve) and verify that the centimeter depth marking at the skin did not slip outward.",
+            options: [
+              {
+                text: "Stabilized the tube against the chest wall with my dominant hand while sliding my finger out next to it, and immediately clamped the drain / attached a Heimlich valve.",
+                isOptimal: true,
+                category: "Optimal State"
+              },
+              {
+                text: "Pulled my guiding finger out without holding the tube down, causing the drain to slip outward by several centimeters.",
+                isOptimal: false,
+                category: "Tube Dislocation During Finger Withdrawal"
+              },
+              {
+                text: "Withdrew my finger cleanly, but left the end of the chest tube unclamped and open to room air in a spontaneously breathing patient.",
+                isOptimal: false,
+                category: "Unclamped Drain — Open Pneumothorax Hazard"
+              }
+            ]
+          }
+        ]
+      }
+    ];
+
+    /* =========================================================================
+       2. APPLICATION STATE & TELEMETRY STORE
+       ========================================================================= */
+    const appState = {
+      currentStepIndex: 0,          // 0..9
+      currentState: "A",            // "A" (Prompt), "B" (Video), "C" (Quiz), "D" (Remediation), "DONE" (Session Summary)
+      currentQuestionIndex: 0,      // 0 or 1 within current step
+      textMode: "FULL",             // "FULL" or "COMPACT"
+      frameMode: "BEZEL",           // "BEZEL" (1024x768) or "FILL"
+      // Track verification status per question ID: 'PENDING' | 'VERIFIED' | 'FAILED'
+      questionStatus: {},
+      // Store shuffled options per question ID so they stay consistent while viewing a question, and reshuffle on retry
+      shuffledOptionsMap: {},
+      // Store last failed option details for State D
+      lastErrorRecord: null,
+      // Simulated Video Player State
+      video: {
+        isPlaying: false,
+        currentTime: 0,
+        duration: 15.0,
+        rafId: null,
+        lastTick: null
+      },
+      // Telemetry log array
+      telemetry: [],
+      sessionStartTime: Date.now()
+    };
+
+    /* Initialize Question Statuses */
+    function initVerificationState() {
+      STEPS_DATA.forEach(step => {
+        step.questions.forEach(q => {
+          appState.questionStatus[q.id] = "PENDING";
+          shuffleOptionsForQuestion(q);
+        });
+      });
+    }
+
+    /* Fisher-Yates Shuffle for Quiz Options */
+    function shuffleOptionsForQuestion(questionObj) {
+      const cloned = questionObj.options.map((opt, idx) => ({ ...opt, origIndex: idx }));
+      for (let i = cloned.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [cloned[i], cloned[j]] = [cloned[j], cloned[i]];
+      }
+      appState.shuffledOptionsMap[questionObj.id] = cloned;
+    }
+
+    /* Check if all sub-questions in a given step index are VERIFIED */
+    function isStepFullyVerified(stepIdx) {
+      const step = STEPS_DATA[stepIdx];
+      return step.questions.every(q => appState.questionStatus[q.id] === "VERIFIED");
+    }
+
+    /* Find first unverified question index in current step (or 0 if all verified) */
+    function getFirstUnverifiedQuestionIndex(stepIdx) {
+      const step = STEPS_DATA[stepIdx];
+      const idx = step.questions.findIndex(q => appState.questionStatus[q.id] !== "VERIFIED");
+      return idx === -1 ? 0 : idx;
+    }
+
+    /* =========================================================================
+       3. TELEMETRY LOGGING ENGINE
+       ========================================================================= */
+    function logEvent(eventType, details = "") {
+      const now = Date.now();
+      const elapsedSec = ((now - appState.sessionStartTime) / 1000).toFixed(2);
+      const isoTime = new Date(now).toISOString();
+      const stepNum = STEPS_DATA[appState.currentStepIndex]?.stepNumber || "DONE";
+      const qId = STEPS_DATA[appState.currentStepIndex]?.questions[appState.currentQuestionIndex]?.id || "-";
+
+      const entry = {
+        index: appState.telemetry.length + 1,
+        timestampISO: isoTime,
+        elapsedSeconds: elapsedSec,
+        step: stepNum,
+        state: appState.currentState,
+        questionId: qId,
+        textMode: appState.textMode,
+        eventType: eventType,
+        details: String(details).replace(/"/g, "'")
+      };
+
+      appState.telemetry.push(entry);
+
+      // Update Researcher Bar Ticker
+      const countEl = document.getElementById("telemetryCount");
+      const lastEl = document.getElementById("telemetryLastEvent");
+      if (countEl) countEl.textContent = appState.telemetry.length;
+      if (lastEl) lastEl.textContent = `[+${elapsedSec}s] S${stepNum}/${appState.currentState}: ${eventType}`;
+    }
+
+    function generateCSVString() {
+      const headers = ["Event_Index", "Timestamp_ISO", "Elapsed_Sec", "Step", "UI_State", "Question_ID", "Text_Density_Mode", "Event_Type", "Details"];
+      const rows = appState.telemetry.map(e => [
+        e.index,
+        `"${e.timestampISO}"`,
+        e.elapsedSeconds,
+        e.step,
+        `"${e.state}"`,
+        `"${e.questionId}"`,
+        `"${e.textMode}"`,
+        `"${e.eventType}"`,
+        `"${e.details}"`
+      ].join(","));
+      return [headers.join(","), ...rows].join("\n");
+    }
+
+    function exportTelemetryCSV() {
+      logEvent("EXPORT_CSV", `Exported ${appState.telemetry.length} events`);
+      const csvContent = generateCSVString();
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `bulau_xr_wireframe_telemetry_${Date.now()}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    function openTelemetryModal() {
+      logEvent("OPEN_TELEMETRY_MODAL", "Researcher viewed telemetry log");
+      const textarea = document.getElementById("telemetryCsvTextarea");
+      textarea.value = generateCSVString();
+      document.getElementById("telemetryModal").classList.remove("hidden");
+    }
+
+    function closeTelemetryModal() {
+      document.getElementById("telemetryModal").classList.add("hidden");
+    }
+
+    function copyTelemetryToClipboard() {
+      const textarea = document.getElementById("telemetryCsvTextarea");
+      textarea.select();
+      document.execCommand("copy");
+      const msg = document.getElementById("copyFeedbackMsg");
+      msg.textContent = "✓ Copied CSV to clipboard!";
+      setTimeout(() => { msg.textContent = "Ready to copy or download."; }, 2500);
+    }
+
+    /* =========================================================================
+       4. RESEARCHER UTILITY BAR CONTROLS
+       ========================================================================= */
+    function populateResearcherDropdown() {
+      const select = document.getElementById("stepJumpSelect");
+      select.innerHTML = STEPS_DATA.map((s, idx) =>
+        `<option value="${idx}">Step ${s.stepNumber}: ${s.shortTitle}</option>`
+      ).join("");
+    }
+
+    function researcherJumpToStep(stepIdxStr) {
+      stopVideoLoop();
+      const idx = parseInt(stepIdxStr, 10);
+      appState.currentStepIndex = idx;
+      appState.currentState = "A";
+      appState.currentQuestionIndex = getFirstUnverifiedQuestionIndex(idx);
+      logEvent("RESEARCHER_JUMP_STEP", `Jumped to Step ${idx + 1}`);
+      renderCurrentState();
+    }
+
+    function toggleFrameMode() {
+      const vp = document.getElementById("ipadViewport");
+      const btn = document.getElementById("btnToggleFrame");
+      const container = document.getElementById("ipadScreenContainer");
+
+      if (appState.frameMode === "BEZEL") {
+        appState.frameMode = "FILL";
+        vp.classList.remove("viewport-bezel-mode");
+        vp.classList.add("viewport-fill-mode");
+        container.classList.remove("lg:p-2");
+        btn.textContent = "[Frame: Fill Browser Viewport]";
+      } else {
+        appState.frameMode = "BEZEL";
+        vp.classList.remove("viewport-fill-mode");
+        vp.classList.add("viewport-bezel-mode");
+        container.classList.add("lg:p-2");
+        btn.textContent = "[Frame: 1024×768 iPad Bezel]";
+      }
+      logEvent("TOGGLE_FRAME_MODE", `Frame mode set to ${appState.frameMode}`);
+    }
+
+    function toggleResearcherBar(show) {
+      const bar = document.getElementById("researcherBar");
+      const restoreBtn = document.getElementById("btnRestoreResearcherBar");
+      const vp = document.getElementById("ipadViewport");
+      if (show) {
+        bar.classList.remove("hidden");
+        restoreBtn.classList.add("hidden");
+        vp.classList.remove("devtools-hidden-bar");
+      } else {
+        bar.classList.add("hidden");
+        restoreBtn.classList.remove("hidden");
+        vp.classList.add("devtools-hidden-bar");
+      }
+    }
+
+    function resetEntireSession() {
+      stopVideoLoop();
+      appState.currentStepIndex = 0;
+      appState.currentState = "A";
+      appState.currentQuestionIndex = 0;
+      appState.lastErrorRecord = null;
+      initVerificationState();
+      logEvent("SESSION_RESET", "Reset all steps to PENDING and returned to Step 1");
+      renderCurrentState();
+    }
+
+    function toggleTextDensity() {
+      appState.textMode = appState.textMode === "FULL" ? "COMPACT" : "FULL";
+      document.getElementById("labelTextMode").textContent = appState.textMode;
+      logEvent("TOGGLE_TEXT_DENSITY", `Switched instruction density to ${appState.textMode}`);
+      renderCurrentState();
+    }
+
+    /* =========================================================================
+       5. STATE MACHINE NAVIGATION HANDLERS
+       ========================================================================= */
+    function goToStateA() {
+      stopVideoLoop();
+      appState.currentState = "A";
+      logEvent("NAV_STATE_A", `Viewing Action Prompt (Step ${appState.currentStepIndex + 1})`);
+      renderCurrentState();
+    }
+
+    function goToStateB() {
+      appState.currentState = "B";
+      appState.video.currentTime = 0;
+      appState.video.isPlaying = true;
+      logEvent("NAV_STATE_B_VIDEO", `Opened Demo Video for Step ${appState.currentStepIndex + 1}`);
+      renderCurrentState();
+      startVideoLoop();
+    }
+
+    function goToStateC(questionIdx = null) {
+      stopVideoLoop();
+      appState.currentState = "C";
+      if (questionIdx !== null) {
+        appState.currentQuestionIndex = questionIdx;
+      } else {
+        appState.currentQuestionIndex = getFirstUnverifiedQuestionIndex(appState.currentStepIndex);
+      }
+      const qObj = STEPS_DATA[appState.currentStepIndex].questions[appState.currentQuestionIndex];
+      logEvent("NAV_STATE_C_QUIZ", `Opened Self-Check ${qObj.id}`);
+      renderCurrentState();
+    }
+
+    function handleQuizOptionSelect(optionIndex) {
+      const step = STEPS_DATA[appState.currentStepIndex];
+      const qObj = step.questions[appState.currentQuestionIndex];
+      const shuffledOpts = appState.shuffledOptionsMap[qObj.id];
+      const chosenOpt = shuffledOpts[optionIndex];
+
+      if (chosenOpt.isOptimal) {
+        appState.questionStatus[qObj.id] = "VERIFIED";
+        logEvent("QUIZ_PASS_OPTIMAL", `${qObj.id} Verified Optimal: ${chosenOpt.text.substring(0, 48)}...`);
+        renderCurrentState();
+      } else {
+        appState.questionStatus[qObj.id] = "FAILED";
+        appState.lastErrorRecord = {
+          questionId: qObj.id,
+          questionLabel: qObj.label,
+          selectedText: chosenOpt.text,
+          errorCategory: chosenOpt.category,
+          gateBadge: qObj.gateBadge,
+          riskText: qObj.riskText,
+          fixText: qObj.fixText,
+          rollbackTarget: step.rollbackTarget
+        };
+        appState.currentState = "D";
+        logEvent("QUIZ_FAIL_REMEDIATION", `${qObj.id} Deviation [${chosenOpt.category}]: ${chosenOpt.text.substring(0, 48)}...`);
+        renderCurrentState();
+      }
+    }
+
+    function retryFailedQuestion() {
+      const step = STEPS_DATA[appState.currentStepIndex];
+      const qObj = step.questions[appState.currentQuestionIndex];
+      // Reshuffle options so the trainee must actively read the physical states again
+      shuffleOptionsForQuestion(qObj);
+      appState.currentState = "C";
+      logEvent("REMEDIATION_RETRY_QUIZ", `Fixed on trainer & retrying ${qObj.id}`);
+      renderCurrentState();
+    }
+
+    function executeRollbackToStep(targetStepNumber) {
+      stopVideoLoop();
+      const targetIdx = targetStepNumber - 1;
+      // Reset verification status from targetIdx up to currentStepIndex so trainee re-verifies the tract
+      for (let i = targetIdx; i <= appState.currentStepIndex; i++) {
+        STEPS_DATA[i].questions.forEach(q => {
+          appState.questionStatus[q.id] = "PENDING";
+          shuffleOptionsForQuestion(q);
+        });
+      }
+      appState.currentStepIndex = targetIdx;
+      appState.currentQuestionIndex = 0;
+      appState.currentState = "A";
+      logEvent("SIMULATOR_TRACT_ROLLBACK", `Rolled back to Step ${targetStepNumber} to re-establish pleural tract`);
+      renderCurrentState();
+    }
+
+    function advanceToNextStep() {
+      stopVideoLoop();
+      if (!isStepFullyVerified(appState.currentStepIndex)) {
+        // Hard gate fallback: route to the unverified question
+        const unverifiedIdx = getFirstUnverifiedQuestionIndex(appState.currentStepIndex);
+        goToStateC(unverifiedIdx);
+        return;
+      }
+
+      if (appState.currentStepIndex < STEPS_DATA.length - 1) {
+        appState.currentStepIndex++;
+        appState.currentQuestionIndex = 0;
+        appState.currentState = "A";
+        logEvent("ADVANCE_NEXT_STEP", `Advanced to Step ${appState.currentStepIndex + 1}`);
+        renderCurrentState();
+      } else {
+        appState.currentState = "DONE";
+        logEvent("PROCEDURE_COMPLETE", "All 10 steps verified optimal");
+        renderCurrentState();
+      }
+    }
+
+    /* =========================================================================
+       6. HEADER & PROGRESS BAR RENDERER
+       ========================================================================= */
+    function renderHeaderAndProgress() {
+      const step = STEPS_DATA[appState.currentStepIndex];
+      document.getElementById("stepJumpSelect").value = String(appState.currentStepIndex);
+
+      if (appState.currentState === "DONE") {
+        document.getElementById("headerStepBadge").textContent = "COMPLETED";
+        document.getElementById("headerStepTitle").textContent = "All 10 Core Chest Tube Steps Verified";
+        document.getElementById("headerStatePill").textContent = "SESSION SUMMARY";
+      } else {
+        document.getElementById("headerStepBadge").textContent = `STEP ${step.stepNumber} / 10`;
+        document.getElementById("headerStepTitle").textContent = step.shortTitle;
+
+        const stateLabels = {
+          "A": "STATE A: BRIEFING / EXECUTION",
+          "B": "STATE B: VIDEO DEMO OVERLAY",
+          "C": `STATE C: SELF-CHECK (${step.questions[appState.currentQuestionIndex].id})`,
+          "D": `STATE D: REMEDIATION GATE (${step.questions[appState.currentQuestionIndex].id})`
+        };
+        document.getElementById("headerStatePill").textContent = stateLabels[appState.currentState] || "";
+      }
+
+      // Render 10-segment progress bar
+      const barContainer = document.getElementById("stepProgressBar");
+      barContainer.innerHTML = STEPS_DATA.map((s, idx) => {
+        const verified = isStepFullyVerified(idx);
+        const hasFail = s.questions.some(q => appState.questionStatus[q.id] === "FAILED");
+        const isCurrent = idx === appState.currentStepIndex && appState.currentState !== "DONE";
+
+        let bgClass = "bg-white text-[#111]";
+        let statusSymbol = "";
+        if (verified) {
+          bgClass = "bg-[#111111] text-[#f6f6f2]";
+          statusSymbol = "✓";
+        } else if (hasFail) {
+          bgClass = "bg-hatched text-[#111] font-extrabold";
+          statusSymbol = "!";
+        }
+
+        const ringClass = isCurrent ? "ring-2 ring-offset-1 ring-[#111] font-extrabold" : "opacity-80";
+
+        return `
+          <button onclick="researcherJumpToStep(${idx})" 
+                  class="h-6 border-2 border-[#111] font-mono-wire text-[11px] flex items-center justify-center gap-0.5 transition ${bgClass} ${ringClass}"
+                  title="Step ${s.stepNumber}: ${s.shortTitle}">
+            <span>${s.stepNumber}</span><span>${statusSymbol}</span>
+          </button>
+        `;
+      }).join("");
+    }
+
+    /* =========================================================================
+       7. MAIN STAGE & BOTTOM BAR RENDERER (4 CORE STATES + SUMMARY)
+       ========================================================================= */
+    function renderCurrentState() {
+      renderHeaderAndProgress();
+      const stage = document.getElementById("mainStage");
+      const footer = document.getElementById("bottomActionBar");
+      const step = STEPS_DATA[appState.currentStepIndex];
+
+      if (appState.currentState === "A") {
+        renderStateA(stage, footer, step);
+      } else if (appState.currentState === "B") {
+        renderStateB(stage, footer, step);
+      } else if (appState.currentState === "C") {
+        renderStateC(stage, footer, step);
+      } else if (appState.currentState === "D") {
+        renderStateD(stage, footer, step);
+      } else if (appState.currentState === "DONE") {
+        renderStateDone(stage, footer);
+      }
+    }
+
+    /* -------------------------------------------------------------------------
+       STATE A: ACTION PROMPT VIEW (Supports FULL vs COMPACT Glanceable Mode)
+       ------------------------------------------------------------------------- */
+    function renderStateA(stage, footer, step) {
+      const allVerified = isStepFullyVerified(appState.currentStepIndex);
+
+      // Sub-question verification status badges
+      const subChecksHtml = step.questions.map((q, qIdx) => {
+        const st = appState.questionStatus[q.id];
+        let badgeStyle = "bg-white text-[#111]";
+        let icon = "[ ] PENDING";
+        if (st === "VERIFIED") {
+          badgeStyle = "bg-[#111] text-[#f6f6f2]";
+          icon = "[✓] VERIFIED";
+        } else if (st === "FAILED") {
+          badgeStyle = "bg-hatched text-[#111] font-extrabold";
+          icon = "[⚠] NEEDS FIX";
+        }
+        return `
+          <button onclick="goToStateC(${qIdx})" class="px-3 py-1.5 border-2 border-[#111] font-mono-wire text-xs font-bold flex items-center gap-2 ${badgeStyle}">
+            <span>${q.label}</span>
+            <span>${icon}</span>
+          </button>
+        `;
+      }).join("");
+
+      // Instruction Body: FULL Paragraph vs COMPACT 3-Bullet Glanceable Checklist
+      let instructionContentHtml = "";
+      if (appState.textMode === "FULL") {
+        instructionContentHtml = `
+          <div class="wire-box p-5 md:p-6 flex flex-col gap-4">
+            <div class="flex items-center justify-between border-b-2 border-[#111] pb-2">
+              <span class="font-mono-wire text-xs font-extrabold uppercase tracking-wider bg-[#111] text-[#f6f6f2] px-2 py-0.5">
+                SYSTEM ACTION PROMPT (FULL BRIEFING VIEW)
+              </span>
+              <span class="font-mono-wire text-xs text-[#4a4a46]">Step ${step.stepNumber} of 10</span>
+            </div>
+            <p class="text-xl md:text-2xl font-bold leading-snug text-[#111]">
+              ${step.actionPrompt}
+            </p>
+          </div>
+        `;
+      } else {
+        instructionContentHtml = `
+          <div class="wire-box p-5 md:p-6 flex flex-col gap-3">
+            <div class="flex items-center justify-between border-b-2 border-[#111] pb-2">
+              <span class="font-mono-wire text-xs font-extrabold uppercase tracking-wider bg-hatched px-2 py-0.5 border border-[#111]">
+                GLANCEABLE EXECUTION CHECKLIST (COMPACT VIEW)
+              </span>
+              <span class="font-mono-wire text-xs text-[#4a4a46]">Hands-Busy Mode</span>
+            </div>
+            <ul class="flex flex-col gap-2.5 text-xl md:text-2xl font-extrabold text-[#111]">
+              ${step.compactBullets.map(b => `<li class="bg-[#eaeae4] border-l-4 border-[#111] px-3 py-2">${b}</li>`).join("")}
+            </ul>
+          </div>
+        `;
+      }
+
+      stage.innerHTML = `
+        <div class="flex flex-col gap-4 my-auto">
+          ${instructionContentHtml}
+
+          <!-- Critical Perception / Safety Cue Callout Box -->
+          <div class="wire-dashed p-4 md:p-5 flex flex-col gap-1.5">
+            <div class="flex items-center gap-2">
+              <span class="font-mono-wire text-xs font-extrabold uppercase px-2 py-0.5 border border-[#111] bg-white">
+                CRITICAL PERCEPTION & SAFETY CUE (P/C ELEMENT)
+              </span>
+            </div>
+            <p class="text-base md:text-lg font-bold text-[#111] leading-snug pt-1">
+              ${step.criticalCue}
+            </p>
+          </div>
+
+          <!-- Verification Gate Status Strip -->
+          <div class="wire-box-flat p-3 bg-[#eaeae4] flex flex-wrap items-center justify-between gap-2">
+            <span class="font-mono-wire text-xs font-bold uppercase">
+              STEP ${step.stepNumber} VERIFICATION GATE STATUS:
+            </span>
+            <div class="flex flex-wrap items-center gap-2">
+              ${subChecksHtml}
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Bottom Ergonomic Action Bar
+      footer.innerHTML = `
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+          <button onclick="goToStateB()" class="wire-btn px-5 py-3 text-lg md:text-xl gap-3">
+            <span class="font-mono-wire text-2xl bg-[#111] text-[#f6f6f2] w-10 h-10 flex items-center justify-center shrink-0">▶</span>
+            <div class="flex flex-col">
+              <span class="font-extrabold">Watch Demo Video (15s)</span>
+              <span class="font-mono-wire text-xs font-normal opacity-80">Optional visual instruction with playback controls</span>
+            </div>
+          </button>
+
+          ${allVerified ? `
+            <button onclick="advanceToNextStep()" class="wire-btn wire-btn-primary px-5 py-3 text-lg md:text-xl gap-3">
+              <span class="font-mono-wire text-2xl bg-[#f6f6f2] text-[#111] w-10 h-10 flex items-center justify-center shrink-0">→</span>
+              <div class="flex flex-col">
+                <span class="font-extrabold">${appState.currentStepIndex < 9 ? `Proceed to Step ${step.stepNumber + 1}` : `Complete Procedure`}</span>
+                <span class="font-mono-wire text-xs font-normal opacity-85">All checks verified for Step ${step.stepNumber}</span>
+              </div>
+            </button>
+          ` : `
+            <button onclick="goToStateC()" class="wire-btn wire-btn-primary px-5 py-3 text-lg md:text-xl gap-3">
+              <span class="font-mono-wire text-2xl bg-[#f6f6f2] text-[#111] w-10 h-10 flex items-center justify-center shrink-0">✓</span>
+              <div class="flex flex-col">
+                <span class="font-extrabold">Task Performed — Verify Step</span>
+                <span class="font-mono-wire text-xs font-normal opacity-85">Answer ${step.questions.length} diagnostic self-check${step.questions.length > 1 ? 's' : ''}</span>
+              </div>
+            </button>
+          `}
+        </div>
+      `;
+    }
+
+    /* -------------------------------------------------------------------------
+       STATE B: INSTRUCTIONAL DEMO VIDEO PLAYER VIEW (Split-Attention Protected)
+       ------------------------------------------------------------------------- */
+    function renderStateB(stage, footer, step) {
+      stage.innerHTML = `
+        <div class="flex flex-col gap-3 h-full justify-between">
+          <!-- 1-Line Split-Attention Header (Full Prompt Hidden During Video) -->
+          <div class="wire-box-flat bg-[#111] text-[#f6f6f2] px-4 py-2 flex items-center justify-between">
+            <span class="font-mono-wire text-xs md:text-sm font-bold uppercase tracking-wide truncate">
+              DEMO VIDEO: STEP ${step.stepNumber} — ${step.shortTitle}
+            </span>
+            <span class="font-mono-wire text-xs bg-[#f6f6f2] text-[#111] px-2 py-0.5 font-bold shrink-0">
+              INSTRUCTIONS HIDDEN TO PREVENT SPLIT-ATTENTION
+            </span>
+          </div>
+
+          <!-- Simulated Interactive Wireframe Video Viewport (HTML5 Canvas) -->
+          <div class="wire-box flex-1 relative bg-white flex flex-col justify-between overflow-hidden min-h-[260px]">
+            <canvas id="demoVideoCanvas" class="w-full h-full block"></canvas>
+
+            <!-- Overlaid Demo Focus Caption Banner at Bottom of Video Canvas -->
+            <div class="bg-[#f6f6f2]/95 border-t-2 border-[#111] px-4 py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 z-10">
+              <div class="text-xs md:text-sm font-bold text-[#111]">
+                <span class="font-mono-wire uppercase bg-hatched px-1.5 py-0.5 border border-[#111] mr-1.5">DEMO FOCUS:</span>
+                ${step.demoFocus}
+              </div>
+              <div id="videoTimecodeBadge" class="font-mono-wire text-sm font-extrabold bg-[#111] text-[#f6f6f2] px-2.5 py-1 shrink-0 self-end sm:self-center">
+                00:00 / 00:15
+              </div>
+            </div>
+          </div>
+
+          <!-- Interactive Timeline Scrubber Bar -->
+          <div class="wire-box-flat bg-[#eaeae4] px-4 py-2.5 flex items-center gap-3">
+            <span class="font-mono-wire text-xs font-bold uppercase shrink-0">SCRUB:</span>
+            <input id="videoScrubberInput" type="range" min="0" max="15" step="0.1" value="${appState.video.currentTime}" 
+                   oninput="scrubVideoTo(this.value)" class="wire-scrubber" />
+          </div>
+        </div>
+      `;
+
+      // Oversized Gloved Playback Controls in Footer
+      footer.innerHTML = `
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full">
+          <button onclick="toggleVideoPlayPause()" class="wire-btn px-4 py-2 text-base md:text-lg gap-2 justify-center">
+            <span id="btnPlayPauseIcon" class="font-mono-wire text-xl font-extrabold">${appState.video.isPlaying ? "⏸" : "▶"}</span>
+            <span id="btnPlayPauseLabel">${appState.video.isPlaying ? "Pause" : "Play"}</span>
+          </button>
+
+          <button onclick="skipVideoBackward5s()" class="wire-btn px-4 py-2 text-base md:text-lg gap-2 justify-center">
+            <span class="font-mono-wire text-xl font-extrabold">⏪</span>
+            <span>-5s</span>
+          </button>
+
+          <button onclick="rewatchVideoFromStart()" class="wire-btn px-4 py-2 text-base md:text-lg gap-2 justify-center">
+            <span class="font-mono-wire text-xl font-extrabold">↺</span>
+            <span>Rewatch</span>
+          </button>
+
+          <button onclick="goToStateA()" class="wire-btn wire-btn-primary px-4 py-2 text-base md:text-lg gap-2 justify-center">
+            <span class="font-mono-wire text-xl font-extrabold">✕</span>
+            <span>Back to Task</span>
+          </button>
+        </div>
+      `;
+
+      // Size canvas immediately
+      setTimeout(resizeAndDrawVideoCanvas, 20);
+    }
+
+    /* -------------------------------------------------------------------------
+       STATE C: SEQUENTIAL MULTI-QUESTION VERIFICATION QUIZ VIEW
+       ------------------------------------------------------------------------- */
+    function renderStateC(stage, footer, step) {
+      const qIdx = appState.currentQuestionIndex;
+      const qObj = step.questions[qIdx];
+      const qStatus = appState.questionStatus[qObj.id];
+      const shuffledOpts = appState.shuffledOptionsMap[qObj.id];
+      const stepFullyVerified = isStepFullyVerified(appState.currentStepIndex);
+
+      // Question Tabs (if step has 2 questions)
+      const questionTabsHtml = step.questions.map((q, idx) => {
+        const st = appState.questionStatus[q.id];
+        const isActive = idx === qIdx;
+        let stateTag = "[ ]";
+        if (st === "VERIFIED") stateTag = "[✓]";
+        if (st === "FAILED") stateTag = "[⚠]";
+
+        return `
+          <button onclick="goToStateC(${idx})" 
+                  class="px-3 py-1.5 border-2 border-[#111] font-mono-wire text-xs font-bold transition ${isActive ? 'bg-[#111] text-[#f6f6f2]' : 'bg-white text-[#111] opacity-80'}">
+            ${q.label} ${stateTag}
+          </button>
+        `;
+      }).join("");
+
+      const optionLetters = ["A", "B", "C", "D"];
+      const optionsCardsHtml = shuffledOpts.map((opt, idx) => {
+        const isVerifiedOptimalCard = qStatus === "VERIFIED" && opt.isOptimal;
+        const cardStyle = isVerifiedOptimalCard
+          ? "bg-[#111111] text-[#f6f6f2] ring-2 ring-offset-2 ring-[#111]"
+          : "bg-[#f6f6f2] text-[#111111]";
+
+        return `
+          <button onclick="handleQuizOptionSelect(${idx})" 
+                  class="wire-btn w-full p-3.5 md:p-4 gap-3.5 justify-start ${cardStyle}">
+            <span class="font-mono-wire text-lg font-extrabold border-2 border-current w-9 h-9 flex items-center justify-center shrink-0">
+              ${isVerifiedOptimalCard ? "✓" : optionLetters[idx]}
+            </span>
+            <span class="text-base md:text-lg font-bold leading-snug text-left flex-1">
+              ${opt.text}
+            </span>
+          </button>
+        `;
+      }).join("");
+
+      stage.innerHTML = `
+        <div class="flex flex-col gap-3.5 my-auto">
+          <!-- Sub-header with Question Counter & Multi-Question Tabs -->
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-[#111] pb-2">
+            <div class="flex items-center gap-2">
+              <span class="font-mono-wire text-xs font-extrabold uppercase bg-hatched px-2.5 py-1 border-2 border-[#111]">
+                DIAGNOSTIC SELF-CHECK ${qIdx + 1} OF ${step.questions.length}
+              </span>
+              <span class="font-mono-wire text-xs text-[#4a4a46] hidden sm:inline">
+                Inspect your physical setup on the trainer
+              </span>
+            </div>
+            <div class="flex items-center gap-2">
+              ${questionTabsHtml}
+            </div>
+          </div>
+
+          <!-- Interrogative Question Prompt -->
+          <div class="wire-box p-4 bg-white">
+            <h2 class="text-xl md:text-2xl font-extrabold text-[#111] leading-snug">
+              ${qObj.questionText}
+            </h2>
+          </div>
+
+          <!-- Confirmation Banner when Verified -->
+          ${qStatus === "VERIFIED" ? `
+            <div class="wire-box-flat bg-[#111] text-[#f6f6f2] px-4 py-2.5 flex items-center justify-between">
+              <span class="font-mono-wire text-sm font-extrabold uppercase">
+                ✓ ${qObj.id} VERIFIED — OPTIMAL PHYSICAL STATE CONFIRMED
+              </span>
+              <span class="font-mono-wire text-xs opacity-80">Gate Unlocked</span>
+            </div>
+          ` : ""}
+
+          <!-- Stacked Ergonomic Option Cards -->
+          <div class="flex flex-col gap-2.5">
+            ${optionsCardsHtml}
+          </div>
+        </div>
+      `;
+
+      // Determine Footer Navigation Buttons in State C
+      let rightCtaHtml = "";
+      if (stepFullyVerified) {
+        const nextLabel = appState.currentStepIndex < 9
+          ? `Proceed to Step ${step.stepNumber + 1}: ${STEPS_DATA[appState.currentStepIndex + 1].shortTitle}`
+          : `Complete Procedure & View Summary`;
+        rightCtaHtml = `
+          <button onclick="advanceToNextStep()" class="wire-btn wire-btn-primary px-5 py-3 text-base md:text-lg gap-3 justify-center">
+            <span class="font-mono-wire text-xl font-extrabold">→</span>
+            <span class="font-extrabold truncate">${nextLabel}</span>
+          </button>
+        `;
+      } else if (qStatus === "VERIFIED" && step.questions.length > 1) {
+        const nextUnverifiedIdx = getFirstUnverifiedQuestionIndex(appState.currentStepIndex);
+        rightCtaHtml = `
+          <button onclick="goToStateC(${nextUnverifiedIdx})" class="wire-btn wire-btn-primary px-5 py-3 text-base md:text-lg gap-3 justify-center">
+            <span class="font-mono-wire text-xl font-extrabold">→</span>
+            <span class="font-extrabold">Continue to ${step.questions[nextUnverifiedIdx].label}</span>
+          </button>
+        `;
+      } else {
+        rightCtaHtml = `
+          <div class="wire-box-flat bg-[#dddcd4] px-4 py-3 flex items-center justify-center font-mono-wire text-xs md:text-sm font-bold text-[#4a4a46] min-h-[68px]">
+            [🔒 Tap the option card above that matches your physical state on the trainer]
+          </div>
+        `;
+      }
+
+      footer.innerHTML = `
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+          <button onclick="goToStateA()" class="wire-btn px-4 py-3 text-base md:text-lg gap-2 justify-center">
+            <span class="font-mono-wire text-xl">←</span>
+            <span>Back to Step ${step.stepNumber} Instructions</span>
+          </button>
+          ${rightCtaHtml}
+        </div>
+      `;
+    }
+
+    /* -------------------------------------------------------------------------
+       STATE D: REMEDIATION & SIMULATOR RECOVERY LOOP VIEW
+       ------------------------------------------------------------------------- */
+    function renderStateD(stage, footer, step) {
+      const err = appState.lastErrorRecord;
+      const qIdx = appState.currentQuestionIndex;
+      const hasSecondQuestion = step.questions.length > 1;
+      const otherQuestionIdx = qIdx === 0 ? 1 : 0;
+      const otherQuestionId = hasSecondQuestion ? step.questions[otherQuestionIdx].id : null;
+      const otherQuestionPending = otherQuestionId && appState.questionStatus[otherQuestionId] !== "VERIFIED";
+
+      stage.innerHTML = `
+        <div class="flex flex-col gap-3.5 my-auto">
+          <!-- High-Contrast Wireframe Alert Banner + Simulator Gate Badge -->
+          <div class="wire-box bg-[#111111] text-[#f6f6f2] p-4 flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-2.5">
+              <span class="font-mono-wire text-2xl font-extrabold bg-[#f6f6f2] text-[#111] px-2.5 py-0.5">⚠</span>
+              <div>
+                <h2 class="text-lg md:text-xl font-extrabold uppercase tracking-tight">
+                  PROCEDURAL DEVIATION DETECTED (${err.questionLabel})
+                </h2>
+                <p class="font-mono-wire text-xs text-[#ccc]">
+                  Deviation Category: ${err.errorCategory}
+                </p>
+              </div>
+            </div>
+            <span class="font-mono-wire text-xs font-extrabold uppercase px-2.5 py-1 bg-[#f6f6f2] text-[#111] border border-white">
+              ${err.gateBadge}
+            </span>
+          </div>
+
+          <!-- 1. What the Trainee Reported -->
+          <div class="wire-box-flat bg-white p-3.5 border-l-8 border-[#111]">
+            <div class="font-mono-wire text-xs font-extrabold uppercase text-[#4a4a46] mb-1">
+              REPORTED PHYSICAL STATE ON SIMULATOR:
+            </div>
+            <p class="text-base font-bold text-[#111]">
+              "${err.selectedText}"
+            </p>
+          </div>
+
+          <!-- 2. Clinical Risk & Patient Harm -->
+          <div class="wire-dashed p-4 flex flex-col gap-1">
+            <div class="font-mono-wire text-xs font-extrabold uppercase">
+              CLINICAL RISK & POTENTIAL PATIENT HARM:
+            </div>
+            <p class="text-base md:text-lg font-bold text-[#111] leading-snug">
+              ${err.riskText}
+            </p>
+          </div>
+
+          <!-- 3. Required Physical Fix on the Limbs & Things Simulator -->
+          <div class="wire-box p-4 bg-[#f6f6f2] flex flex-col gap-1.5">
+            <div class="flex items-center justify-between">
+              <span class="font-mono-wire text-xs font-extrabold uppercase bg-[#111] text-[#f6f6f2] px-2 py-0.5">
+                REQUIRED PHYSICAL FIX ON SIMULATOR TRAINER
+              </span>
+              <span class="font-mono-wire text-xs font-bold">Step ${step.stepNumber} Gate Locked</span>
+            </div>
+            <p class="text-lg md:text-xl font-extrabold text-[#111] leading-snug pt-1">
+              ${err.fixText}
+            </p>
+          </div>
+        </div>
+      `;
+
+      // Build Bottom Action Bar with Rollback & Multi-Question Options
+      const buttons = [];
+
+      // 1. Review Instructions
+      buttons.push(`
+        <button onclick="goToStateA()" class="wire-btn px-3.5 py-2 text-sm md:text-base gap-2 justify-center">
+          <span class="font-mono-wire text-lg">📖</span>
+          <span>Review Instructions</span>
+        </button>
+      `);
+
+      // 2. Re-watch Demo Video
+      buttons.push(`
+        <button onclick="goToStateB()" class="wire-btn px-3.5 py-2 text-sm md:text-base gap-2 justify-center">
+          <span class="font-mono-wire text-lg">▶</span>
+          <span>Watch Demo</span>
+        </button>
+      `);
+
+      // 3. Conditional Rollback Button (for Steps 6, 7, 8 when foam tract is lost)
+      if (err.rollbackTarget) {
+        buttons.push(`
+          <button onclick="executeRollbackToStep(${err.rollbackTarget})" class="wire-btn bg-hatched px-3.5 py-2 text-sm md:text-base gap-2 justify-center">
+            <span class="font-mono-wire text-lg font-extrabold">⏮</span>
+            <span>Roll Back to Step ${err.rollbackTarget}</span>
+          </button>
+        `);
+      } else if (otherQuestionPending) {
+        // Or allow checking the other question in this step while keeping step advance locked
+        buttons.push(`
+          <button onclick="goToStateC(${otherQuestionIdx})" class="wire-btn bg-hatched px-3.5 py-2 text-sm md:text-base gap-2 justify-center">
+            <span class="font-mono-wire text-lg font-extrabold">→</span>
+            <span>Check ${step.questions[otherQuestionIdx].id} First</span>
+          </button>
+        `);
+      }
+
+      // 4. Primary CTA: Fixed on Trainer — Retry Check
+      buttons.push(`
+        <button onclick="retryFailedQuestion()" class="wire-btn wire-btn-primary px-4 py-2 text-sm md:text-base gap-2 justify-center">
+          <span class="font-mono-wire text-lg font-extrabold">↻</span>
+          <span>Fixed on Trainer — Re-Verify</span>
+        </button>
+      `);
+
+      const gridColsClass = buttons.length === 4 ? "grid-cols-2 lg:grid-cols-4" : "grid-cols-1 sm:grid-cols-3";
+      footer.innerHTML = `
+        <div class="grid ${gridColsClass} gap-3 w-full">
+          ${buttons.join("")}
+        </div>
+      `;
+    }
+
+    /* -------------------------------------------------------------------------
+       STATE DONE: PROCEDURE COMPLETE & TELEMETRY SUMMARY
+       ------------------------------------------------------------------------- */
+    function renderStateDone(stage, footer) {
+      const totalEvents = appState.telemetry.length;
+      const videoViews = appState.telemetry.filter(e => e.eventType === "NAV_STATE_B_VIDEO").length;
+      const quizFails = appState.telemetry.filter(e => e.eventType === "QUIZ_FAIL_REMEDIATION").length;
+      const textToggles = appState.telemetry.filter(e => e.eventType === "TOGGLE_TEXT_DENSITY").length;
+      const rollbacks = appState.telemetry.filter(e => e.eventType === "SIMULATOR_TRACT_ROLLBACK").length;
+
+      stage.innerHTML = `
+        <div class="flex flex-col gap-4 my-auto">
+          <div class="wire-box p-6 bg-white flex flex-col gap-3">
+            <div class="flex items-center justify-between border-b-2 border-[#111] pb-2">
+              <span class="font-mono-wire text-xs font-extrabold uppercase bg-[#111] text-[#f6f6f2] px-2.5 py-1">
+                PROCEDURE COMPLETE — ALL 10 CORE STEPS VERIFIED
+              </span>
+              <span class="font-mono-wire text-xs font-bold">Bülau Thoracic Drainage</span>
+            </div>
+            <h2 class="text-2xl font-extrabold text-[#111]">
+              Chest Tube Insertion & Functional Check Completed
+            </h2>
+            <p class="text-base text-[#333] font-medium">
+              All 10 procedural steps and diagnostic self-checks on the simulator have been verified. You can now export the session interaction telemetry CSV for your usability analysis.
+            </p>
+
+            <!-- Session Metrics Grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 pt-2">
+              <div class="wire-box-flat p-3 bg-[#f6f6f2]">
+                <div class="font-mono-wire text-xs text-[#4a4a46]">TOTAL UI EVENTS</div>
+                <div class="font-mono-wire text-2xl font-extrabold">${totalEvents}</div>
+              </div>
+              <div class="wire-box-flat p-3 bg-[#f6f6f2]">
+                <div class="font-mono-wire text-xs text-[#4a4a46]">DEMO VIDEOS</div>
+                <div class="font-mono-wire text-2xl font-extrabold">${videoViews}</div>
+              </div>
+              <div class="wire-box-flat p-3 bg-[#f6f6f2]">
+                <div class="font-mono-wire text-xs text-[#4a4a46]">DEVIATIONS CAUGHT</div>
+                <div class="font-mono-wire text-2xl font-extrabold">${quizFails}</div>
+              </div>
+              <div class="wire-box-flat p-3 bg-[#f6f6f2]">
+                <div class="font-mono-wire text-xs text-[#4a4a46]">TEXT TOGGLES</div>
+                <div class="font-mono-wire text-2xl font-extrabold">${textToggles}</div>
+              </div>
+              <div class="wire-box-flat p-3 bg-[#f6f6f2]">
+                <div class="font-mono-wire text-xs text-[#4a4a46]">TRACT ROLLBACKS</div>
+                <div class="font-mono-wire text-2xl font-extrabold">${rollbacks}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      footer.innerHTML = `
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
+          <button onclick="openTelemetryModal()" class="wire-btn px-5 py-3 text-base md:text-lg gap-2 justify-center">
+            <span class="font-mono-wire text-xl">📋</span>
+            <span>Inspect / Copy CSV Log</span>
+          </button>
+          <button onclick="exportTelemetryCSV()" class="wire-btn wire-btn-primary px-5 py-3 text-base md:text-lg gap-2 justify-center">
+            <span class="font-mono-wire text-xl">⬇</span>
+            <span>Download Session CSV</span>
+          </button>
+          <button onclick="resetEntireSession()" class="wire-btn px-5 py-3 text-base md:text-lg gap-2 justify-center">
+            <span class="font-mono-wire text-xl">↺</span>
+            <span>Start New Participant Session</span>
+          </button>
+        </div>
+      `;
+    }
+
+    /* =========================================================================
+       8. SIMULATED LO-FI WIREFRAME VIDEO PLAYER & SCHEMATIC CANVAS ANIMATOR
+       ========================================================================= */
+    function startVideoLoop() {
+      stopVideoLoop();
+      appState.video.lastTick = performance.now();
+      function tick(now) {
+        if (appState.currentState !== "B") return;
+        const dt = (now - appState.video.lastTick) / 1000;
+        appState.video.lastTick = now;
+
+        if (appState.video.isPlaying) {
+          appState.video.currentTime += dt;
+          if (appState.video.currentTime >= appState.video.duration) {
+            appState.video.currentTime = appState.video.duration;
+            appState.video.isPlaying = false;
+            updateVideoControlsUI();
+          }
+          updateVideoScrubberUI();
+        }
+        drawWireframeVideoSchematic();
+        appState.video.rafId = requestAnimationFrame(tick);
+      }
+      appState.video.rafId = requestAnimationFrame(tick);
+    }
+
+    function stopVideoLoop() {
+      if (appState.video.rafId) {
+        cancelAnimationFrame(appState.video.rafId);
+        appState.video.rafId = null;
+      }
+      appState.video.isPlaying = false;
+    }
+
+    function toggleVideoPlayPause() {
+      if (appState.video.currentTime >= appState.video.duration) {
+        appState.video.currentTime = 0;
+      }
+      appState.video.isPlaying = !appState.video.isPlaying;
+      logEvent(appState.video.isPlaying ? "VIDEO_PLAY" : "VIDEO_PAUSE", `Timecode ${appState.video.currentTime.toFixed(1)}s`);
+      updateVideoControlsUI();
+    }
+
+    function skipVideoBackward5s() {
+      appState.video.currentTime = Math.max(0, appState.video.currentTime - 5);
+      logEvent("VIDEO_SKIP_BACK_5S", `New timecode ${appState.video.currentTime.toFixed(1)}s`);
+      updateVideoScrubberUI();
+      drawWireframeVideoSchematic();
+    }
+
+    function rewatchVideoFromStart() {
+      appState.video.currentTime = 0;
+      appState.video.isPlaying = true;
+      logEvent("VIDEO_REWATCH", "Restarted demo video from 00:00");
+      updateVideoControlsUI();
+      updateVideoScrubberUI();
+    }
+
+    function scrubVideoTo(val) {
+      appState.video.currentTime = parseFloat(val);
+      logEvent("VIDEO_SCRUB", `Scrubbed to ${appState.video.currentTime.toFixed(1)}s`);
+      updateVideoScrubberUI();
+      drawWireframeVideoSchematic();
+    }
+
+    function updateVideoControlsUI() {
+      const iconEl = document.getElementById("btnPlayPauseIcon");
+      const labelEl = document.getElementById("btnPlayPauseLabel");
+      if (iconEl) iconEl.textContent = appState.video.isPlaying ? "⏸" : "▶";
+      if (labelEl) labelEl.textContent = appState.video.isPlaying ? "Pause" : "Play";
+    }
+
+    function updateVideoScrubberUI() {
+      const scrubber = document.getElementById("videoScrubberInput");
+      if (scrubber) scrubber.value = appState.video.currentTime;
+      const badge = document.getElementById("videoTimecodeBadge");
+      if (badge) {
+        const cur = Math.floor(appState.video.currentTime).toString().padStart(2, "0");
+        badge.textContent = `00:${cur} / 00:15`;
+      }
+    }
+
+    function resizeAndDrawVideoCanvas() {
+      const canvas = document.getElementById("demoVideoCanvas");
+      if (!canvas) return;
+      const rect = canvas.parentElement.getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = Math.max(200, rect.height - 46);
+      drawWireframeVideoSchematic();
+    }
+
+    /* Renders a distinct lo-fi procedural schematic animation for each of the 10 steps */
+    function drawWireframeVideoSchematic() {
+      const canvas = document.getElementById("demoVideoCanvas");
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+      const w = canvas.width;
+      const h = canvas.height;
+      const t = appState.video.currentTime / appState.video.duration; // 0..1 normalized progress
+      const stepNum = appState.currentStepIndex + 1;
+
+      ctx.clearRect(0, 0, w, h);
+
+      // Background blueprint grid
+      ctx.strokeStyle = "#e2e2dc";
+      ctx.lineWidth = 1;
+      for (let x = 0; x < w; x += 24) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+      }
+      for (let y = 0; y < h; y += 24) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+      }
+
+      // Top-left wireframe camera HUD tag
+      ctx.fillStyle = "#111111";
+      ctx.font = "bold 12px monospace";
+      ctx.fillText(`[WIREFRAME SIMULATOR FEED — STEP ${stepNum} ANIMATION]`, 16, 24);
+
+      const cx = w / 2;
+      const cy = h / 2;
+
+      ctx.save();
+      ctx.strokeStyle = "#111111";
+      ctx.fillStyle = "#111111";
+      ctx.lineWidth = 2.5;
+
+      // Helper to draw cross-section ribs and pleural line
+      function drawRibsAndPleura() {
+        // Pleural line
+        ctx.setLineDash([6, 4]);
+        ctx.beginPath();
+        ctx.moveTo(cx - 180, cy + 28);
+        ctx.lineTo(cx + 180, cy + 28);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.font = "bold 11px monospace";
+        ctx.fillText("PARIETAL PLEURA", cx + 95, cy + 44);
+
+        // Two ribs in cross-section
+        // Rib 4 (Overlying rib with neurovascular bundle on inferior groove)
+        ctx.fillStyle = "#dcdcd4";
+        ctx.beginPath();
+        ctx.ellipse(cx - 85, cy - 10, 32, 20, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = "#111";
+        ctx.fillText("RIB 4", cx - 103, cy - 6);
+        // Neurovascular bundle dot at lower edge of Rib 4
+        ctx.beginPath();
+        ctx.arc(cx - 85, cy + 12, 5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillText("NV Bundle (Avoid)", cx - 145, cy + 24);
+
+        // Rib 5 (Target upper edge)
+        ctx.fillStyle = "#dcdcd4";
+        ctx.beginPath();
+        ctx.ellipse(cx + 65, cy - 10, 34, 22, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = "#111";
+        ctx.fillText("RIB 5 (Upper Edge ↑)", cx + 30, cy - 38);
+      }
+
+      if (stepNum === 1) {
+        // Step 1: Trocar pulled out + Forceps clamped 1 cm behind tip
+        const tubeY = cy - 10;
+        // Chest tube outline
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(cx - 140, tubeY - 12, 240, 24);
+        ctx.strokeRect(cx - 140, tubeY - 12, 240, 24);
+        // Side holes
+        ctx.fillStyle = "#111";
+        ctx.fillRect(cx - 115, tubeY - 5, 12, 10);
+        ctx.fillRect(cx - 80, tubeY - 5, 12, 10);
+
+        // Trocar sliding out to the right during first half (t: 0 -> 0.5)
+        const trocarOffset = Math.min(1, t * 2) * 140;
+        ctx.save();
+        ctx.globalAlpha = Math.max(0.15, 1 - t * 1.4);
+        ctx.fillStyle = "#555";
+        ctx.fillRect(cx - 120 + trocarOffset, tubeY - 4, 230, 8);
+        ctx.fillText("1. Pull Out Obsolete Trocar →", cx + 20, tubeY - 24);
+        ctx.restore();
+
+        // Kornzange clamping 1 cm behind tip in second half (t: 0.4 -> 1.0)
+        const clampProgress = Math.max(0, Math.min(1, (t - 0.35) / 0.5));
+        const clampY = tubeY + 65 - clampProgress * 55;
+        ctx.strokeStyle = "#111";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(cx - 118, clampY);
+        ctx.lineTo(cx - 118, clampY - 22);
+        ctx.moveTo(cx - 110, clampY);
+        ctx.lineTo(cx - 110, clampY - 22);
+        ctx.stroke();
+
+        // 1 cm protruding tip callout
+        ctx.fillStyle = "#111";
+        ctx.fillText("← 1 cm Soft Tip Protruding", cx - 265, tubeY + 4);
+        ctx.fillText("2. Clamp Forceps Flush 1 cm Behind Tip", cx - 150, tubeY + 68);
+      } else if (stepNum === 2) {
+        // Step 2: Triangle of Safety & 4-5 cm incision parallel to rib
+        ctx.strokeRect(cx - 150, cy - 65, 300, 130);
+        ctx.beginPath();
+        ctx.moveTo(cx - 60, cy - 65);
+        ctx.lineTo(cx - 110, cy + 65);
+        ctx.moveTo(cx - 60, cy - 65);
+        ctx.lineTo(cx + 70, cy + 65);
+        ctx.stroke();
+        ctx.fillText("Pectoralis Major", cx - 140, cy - 45);
+        ctx.fillText("Latissimus Dorsi", cx + 35, cy - 45);
+        ctx.fillText("4th/5th ICS (1 Hand-Width Below Axilla)", cx - 115, cy + 55);
+
+        // Animated 4-5 cm incision line
+        const incLen = Math.min(1, t * 1.3) * 90;
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(cx - 50, cy + 10);
+        ctx.lineTo(cx - 50 + incLen, cy - 8);
+        ctx.stroke();
+        ctx.fillText("4–5 cm Incision (Cutis & Subcutis Only)", cx - 80, cy - 20);
+      } else if (stepNum === 3) {
+        // Step 3: Cranially curved Metzenbaum gliding from mid-rib to upper edge
+        drawRibsAndPleura();
+        const glideT = Math.min(1, t * 1.25);
+        const tipX = cx + 65 - glideT * 28;
+        const tipY = cy - 12 - glideT * 14;
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(cx + 120, cy - 75);
+        ctx.quadraticCurveTo(tipX + 20, tipY + 15, tipX, tipY);
+        ctx.stroke();
+        ctx.fillText("Closed Curved Scissors (Convexity Cranial) → Upper Rib Edge", cx - 150, cy - 60);
+      } else if (stepNum === 4) {
+        // Step 4: Bimanual depth-stop perforation
+        drawRibsAndPleura();
+        const depthT = Math.min(1, t * 1.3);
+        const tipY = cy - 18 + depthT * 56;
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(cx + 35, cy - 75);
+        ctx.lineTo(cx + 25, tipY);
+        ctx.stroke();
+
+        // Non-dominant hand depth guard block at skin surface
+        ctx.fillStyle = "#111";
+        ctx.fillRect(cx - 10, cy - 45, 70, 14);
+        ctx.fillStyle = "#fff";
+        ctx.fillText("DEPTH STOP HAND", cx - 6, cy - 35);
+        ctx.fillStyle = "#111";
+        if (depthT >= 0.85) {
+          ctx.fillText("★ LOSS OF RESISTANCE (STOP!)", cx - 160, cy + 58);
+        }
+      } else if (stepNum === 5) {
+        // Step 5: Spread Metzenbaum scissors at least 1 finger width
+        drawRibsAndPleura();
+        const spread = Math.min(1, t * 1.3) * 26;
+        ctx.lineWidth = 3.5;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy - 65);
+        ctx.lineTo(cx - spread, cy + 45);
+        ctx.moveTo(cx, cy - 65);
+        ctx.lineTo(cx + spread, cy + 45);
+        ctx.stroke();
+        ctx.fillText("Spread ≥ 1 Finger Width (Perpendicular Posture)", cx - 140, cy - 70);
+      } else if (stepNum === 6) {
+        // Step 6: Opposing-motion swap (Open scissors out, index finger in)
+        drawRibsAndPleura();
+        const swapT = Math.min(1, t * 1.2);
+        // Scissors moving up
+        const scisY = cy + 35 - swapT * 75;
+        ctx.strokeRect(cx - 28, scisY - 30, 22, 40);
+        ctx.fillText("↑ Open Scissors Out", cx - 150, cy - 45);
+        // Finger moving down simultaneously
+        const fingY = cy - 50 + swapT * 90;
+        ctx.fillStyle = "#dcdcd4";
+        ctx.fillRect(cx + 4, fingY - 45, 22, 65);
+        ctx.strokeRect(cx + 4, fingY - 45, 22, 65);
+        ctx.fillStyle = "#111";
+        ctx.fillText("↓ Index Finger In (Opposing Motion)", cx + 34, cy - 45);
+      } else if (stepNum === 7) {
+        // Step 7: 360 degree intrapleural sweep, finger stays parked
+        drawRibsAndPleura();
+        const angle = t * Math.PI * 2;
+        ctx.fillStyle = "#dcdcd4";
+        ctx.fillRect(cx - 10, cy - 45, 22, 85);
+        ctx.strokeRect(cx - 10, cy - 45, 22, 85);
+        ctx.beginPath();
+        ctx.arc(cx, cy + 45, 36, 0, angle);
+        ctx.stroke();
+        ctx.fillStyle = "#111";
+        ctx.fillText("360° Sweep Inside Pleura — Finger Remains Parked", cx - 145, cy - 60);
+      } else if (stepNum === 8) {
+        // Step 8: 1 cm drain tip contacts fingertip, then rotate & open forceps
+        drawRibsAndPleura();
+        // Parked finger at opening
+        ctx.fillStyle = "#dcdcd4";
+        ctx.fillRect(cx - 25, cy - 25, 20, 62);
+        ctx.strokeRect(cx - 25, cy - 25, 20, 62);
+        // Clamped drain meeting fingertip
+        const advanceT = Math.min(1, t * 1.5);
+        const drainX = cx + 80 - advanceT * 75;
+        ctx.fillStyle = "#fff";
+        ctx.fillRect(drainX, cy + 12, 95, 16);
+        ctx.strokeRect(drainX, cy + 12, 95, 16);
+        ctx.fillStyle = "#111";
+        ctx.fillText("1 cm Drain Tip Touches Fingertip → Align → Unclamp", cx - 155, cy - 60);
+      } else if (stepNum === 9) {
+        // Step 9: Withdraw open forceps, advance drain until sentinel side-hole is intrathoracic
+        drawRibsAndPleura();
+        const adv = Math.min(1, t * 1.3) * 95;
+        ctx.fillStyle = "#fff";
+        ctx.fillRect(cx - 20 - adv, cy + 32, 180, 16);
+        ctx.strokeRect(cx - 20 - adv, cy + 32, 180, 16);
+        // Sentinel eye marker
+        ctx.fillStyle = "#111";
+        ctx.fillRect(cx + 85 - adv, cy + 36, 10, 8);
+        ctx.fillText("All Side Holes Intrathoracic (Over Guiding Finger)", cx - 145, cy - 60);
+      } else if (stepNum === 10) {
+        // Step 10: Fogging check, withdraw finger while stabilizing tube, clamp tube
+        drawRibsAndPleura();
+        ctx.fillStyle = "#fff";
+        ctx.fillRect(cx - 90, cy - 20, 180, 18);
+        ctx.strokeRect(cx - 90, cy - 20, 180, 18);
+        // Fogging waves inside tube
+        ctx.fillStyle = "#bbb";
+        const fogW = (Math.sin(t * 14) + 1) * 35 + 20;
+        ctx.fillRect(cx - 40, cy - 16, fogW, 10);
+        // Clamp at distal end
+        ctx.fillStyle = "#111";
+        ctx.fillRect(cx + 65, cy - 32, 12, 42);
+        ctx.fillText("Respiratory Fogging Verified + Finger Out + Drain Clamped", cx - 165, cy - 60);
+      }
+
+      ctx.restore();
+    }
+
+    /* Handle Window Resize for Video Canvas */
+    window.addEventListener("resize", () => {
+      if (appState.currentState === "B") {
+        resizeAndDrawVideoCanvas();
+      }
+    });
+
+    /* =========================================================================
+       9. BOOTSTRAP PROTOTYPE ON WINDOW LOAD
+       ========================================================================= */
+    window.onload = function () {
+      initVerificationState();
+      populateResearcherDropdown();
+      logEvent("SESSION_START", "Loaded Bülau Chest Tube 10-Step Lo-Fi Spatial UI Prototype");
+      renderCurrentState();
+    };
+  </script>
+</body>
+</html>
