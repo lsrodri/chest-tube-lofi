@@ -1224,6 +1224,16 @@
       renderCurrentState();
     }
 
+    function collapseFullToCompactForCurrentStep() {
+      if (appState.textMode === "FULL") {
+        appState.textMode = "COMPACT";
+        document.getElementById("labelTextMode").textContent = appState.textMode;
+      }
+      appState.temporaryFullStepIndex = null;
+      logEvent("TEMP_COLLAPSE_TO_COMPACT", `Collapsed Step ${appState.currentStepIndex + 1} full text to compact list`);
+      renderCurrentState();
+    }
+
     /* =========================================================================
        5. STATE MACHINE NAVIGATION HANDLERS
        ========================================================================= */
@@ -1441,13 +1451,21 @@
       // Instruction Body: FULL Paragraph vs COMPACT 3-Bullet Glanceable Checklist
       let instructionContentHtml = "";
       if (isFullTextVisibleForCurrentStep()) {
+        const showCollapseControl = appState.temporaryFullStepIndex === appState.currentStepIndex || appState.textMode === "FULL";
         instructionContentHtml = `
           <div class="wire-box p-5 md:p-6 flex flex-col gap-4">
             <div class="flex items-center justify-between border-b-2 border-[#111] pb-2">
               <span class="font-mono-wire text-xs font-extrabold uppercase tracking-wider bg-[#111] text-[#f6f6f2] px-2 py-0.5">
                 SYSTEM ACTION PROMPT (FULL BRIEFING VIEW)
               </span>
-              <span class="font-mono-wire text-xs text-[#4a4a46]">Step ${step.stepNumber} of 10</span>
+              <div class="flex items-center gap-2">
+                <span class="font-mono-wire text-xs text-[#4a4a46]">Step ${step.stepNumber} of 10</span>
+                ${showCollapseControl ? `
+                  <button onclick="collapseFullToCompactForCurrentStep()" class="wire-btn-sm px-2.5 py-1 text-[11px] font-mono-wire font-bold" title="Return to compact list for this step">
+                    COMPACT LIST
+                  </button>
+                ` : ""}
+              </div>
             </div>
             <p class="text-xl md:text-2xl font-bold leading-snug text-[#111]">
               ${step.actionPrompt}
