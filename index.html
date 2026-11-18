@@ -1579,8 +1579,6 @@
 
       stage.innerHTML = `
         <div class="flex flex-col gap-4 my-auto">
-          ${instructionContentHtml}
-
           <!-- Critical Perception / Safety Cue Callout Box -->
           <div class="wire-dashed p-4 md:p-5 flex flex-col gap-1.5">
             <div class="flex items-center gap-2">
@@ -1592,6 +1590,8 @@
               ${step.criticalCue}
             </p>
           </div>
+
+          ${instructionContentHtml}
 
           <!-- Verification Gate Status Strip -->
           <div class="wire-box-flat p-3 bg-[#eaeae4] flex flex-wrap items-center justify-between gap-2">
